@@ -1530,10 +1530,7 @@
         // Device Control Component
         function DeviceControl({ isConnected, setIsConnected, selectedRecipe, user }) {
             const [flavorLevels, setFlavorLevels] = useState({
-                spicy: 50,
-                salty: 30,
-                sweet: 40,
-                umami: 60
+                sweet: 40
             });
             const [isDispensing, setIsDispensing] = useState(false);
             const [showConnectionModal, setShowConnectionModal] = useState(false);
@@ -1542,15 +1539,13 @@
             const [isScanning, setIsScanning] = useState(false);
             const [selectedDevice, setSelectedDevice] = useState(null);
             const [savedPresets, setSavedPresets] = useState([
-                { id: 1, name: 'Mild & Balanced', levels: { spicy: 20, salty: 30, sweet: 25, umami: 35 } },
-                { id: 2, name: 'Extra Spicy', levels: { spicy: 85, salty: 40, sweet: 15, umami: 50 } },
-                { id: 3, name: 'Sweet & Savory', levels: { spicy: 25, salty: 45, sweet: 60, umami: 55 } }
+                { id: 1, name: 'Mild Sweet', levels: { sweet: 25 } },
+                { id: 2, name: 'Extra Sweet', levels: { sweet: 85 } },
+                { id: 3, name: 'Balanced', levels: { sweet: 50 } }
             ]);
             const [showPresetModal, setShowPresetModal] = useState(false);
             const [presetName, setPresetName] = useState('');
             const [showSetupGuide, setShowSetupGuide] = useState(false);
-            const [wifiIP, setWifiIP] = useState('192.168.1.100');
-            const [showWifiInput, setShowWifiInput] = useState(false);
 
             // Calculate dynamic calories based on flavor adjustments
             const calculateCalories = () => {
@@ -1559,23 +1554,11 @@
                 let baseCalories = selectedRecipe.baseCalories;
                 
                 // Each flavor level represents grams of that ingredient added
-                // Sweet (sugar): 4 calories per gram
+                // Sweet (sugar): 4 calories per gram (only flavor module available)
                 const sweetGrams = flavorLevels.sweet;
                 const sweetCalories = sweetGrams * 4;
                 
-                // Salty (salt/soy sauce): ~0 calories per gram for salt, but soy sauce has some
-                const saltyGrams = flavorLevels.salty;
-                const saltyCalories = saltyGrams * 0.5; // Soy sauce average
-                
-                // Spicy (chili oil/sauce): ~9 calories per gram (oil-based)
-                const spicyGrams = flavorLevels.spicy;
-                const spicyCalories = spicyGrams * 2; // Chili sauce average
-                
-                // Umami (MSG/fish sauce): ~1 calorie per gram
-                const umamiGrams = flavorLevels.umami;
-                const umamiCalories = umamiGrams * 1;
-                
-                const totalAddedCalories = sweetCalories + saltyCalories + spicyCalories + umamiCalories;
+                const totalAddedCalories = sweetCalories;
                 const adjustedCalories = baseCalories + totalAddedCalories;
                 
                 return Math.round(adjustedCalories);
@@ -1583,25 +1566,25 @@
 
             // Get recommended amounts based on recipe type
             const getRecommendedLevels = () => {
-                if (!selectedRecipe) return { spicy: 25, salty: 30, sweet: 20, umami: 40 };
+                if (!selectedRecipe) return { sweet: 20 };
                 
-                // Different cuisines have different flavor profiles
+                // Different cuisines have different sweet flavor profiles
                 if (selectedRecipe.category === 'Thai') {
-                    return { spicy: 60, salty: 45, sweet: 50, umami: 55 };
+                    return { sweet: 50 };
                 } else if (selectedRecipe.category === 'Western') {
-                    return { spicy: 15, salty: 35, sweet: 10, umami: 25 };
+                    return { sweet: 10 };
                 } else if (selectedRecipe.category === 'Japanese') {
-                    return { spicy: 10, salty: 50, sweet: 30, umami: 70 };
+                    return { sweet: 30 };
                 } else if (selectedRecipe.category === 'Indian') {
-                    return { spicy: 70, salty: 40, sweet: 25, umami: 30 };
+                    return { sweet: 25 };
                 } else if (selectedRecipe.category === 'Korean') {
-                    return { spicy: 65, salty: 45, sweet: 35, umami: 60 };
+                    return { sweet: 35 };
                 } else if (selectedRecipe.category === 'Mexican') {
-                    return { spicy: 55, salty: 40, sweet: 20, umami: 35 };
+                    return { sweet: 20 };
                 } else if (selectedRecipe.category === 'Healthy') {
-                    return { spicy: 20, salty: 20, sweet: 15, umami: 30 };
+                    return { sweet: 15 };
                 }
-                return { spicy: 30, salty: 30, sweet: 25, umami: 40 };
+                return { sweet: 25 };
             };
 
             const applyRecommended = () => {
@@ -1657,15 +1640,12 @@
             const startDispensing = async () => {
                 setIsDispensing(true);
                 
-                // Prepare command data
+                // Prepare command data - only sweet flavor for single module
                 const commandData = {
                     action: 'dispense',
                     recipe: selectedRecipe?.title || 'Custom',
                     flavors: {
-                        spicy: flavorLevels.spicy,
-                        salty: flavorLevels.salty,
-                        sweet: flavorLevels.sweet,
-                        umami: flavorLevels.umami
+                        sweet: flavorLevels.sweet
                     },
                     timestamp: Date.now()
                 };
@@ -1679,11 +1659,6 @@
                         const data = encoder.encode(JSON.stringify(commandData));
                         await window.flavorStationBLE.characteristic.writeValue(data);
                         console.log('Command sent via Bluetooth');
-                    }
-                    // Send via WiFi
-                    else if (window.flavorStationWS && window.flavorStationWS.readyState === WebSocket.OPEN) {
-                        window.flavorStationWS.send(JSON.stringify(commandData));
-                        console.log('Command sent via WiFi');
                     }
                     else {
                         console.warn('No active connection to send command');
@@ -1919,46 +1894,8 @@
                                 <div className="device-controls">
                                     <div className="control-card">
                                         <div className="control-label">
-                                            <i className="fas fa-pepper-hot" style={{ color: '#EF476F' }}></i>
-                                            Spicy (Chili Sauce)
-                                        </div>
-                                        <div className="slider-container">
-                                            <input 
-                                                type="range" 
-                                                min="0" 
-                                                max="100" 
-                                                value={flavorLevels.spicy}
-                                                onChange={(e) => updateFlavor('spicy', e.target.value)}
-                                                className="slider"
-                                                style={{ background: `linear-gradient(to right, #EF476F 0%, #EF476F ${flavorLevels.spicy}%, var(--bg-dark) ${flavorLevels.spicy}%, var(--bg-dark) 100%)` }}
-                                            />
-                                            <div className="slider-value">{flavorLevels.spicy}g</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="control-card">
-                                        <div className="control-label">
-                                            <i className="fas fa-droplet" style={{ color: '#06D6A0' }}></i>
-                                            Salty (Soy Sauce)
-                                        </div>
-                                        <div className="slider-container">
-                                            <input 
-                                                type="range" 
-                                                min="0" 
-                                                max="100" 
-                                                value={flavorLevels.salty}
-                                                onChange={(e) => updateFlavor('salty', e.target.value)}
-                                                className="slider"
-                                                style={{ background: `linear-gradient(to right, #06D6A0 0%, #06D6A0 ${flavorLevels.salty}%, var(--bg-dark) ${flavorLevels.salty}%, var(--bg-dark) 100%)` }}
-                                            />
-                                            <div className="slider-value">{flavorLevels.salty}g</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="control-card">
-                                        <div className="control-label">
                                             <i className="fas fa-candy-cane" style={{ color: '#FFB703' }}></i>
-                                            Sweet (Sugar)
+                                            Flavor Module #1 (Sweet)
                                         </div>
                                         <div className="slider-container">
                                             <input 
@@ -1971,25 +1908,6 @@
                                                 style={{ background: `linear-gradient(to right, #FFB703 0%, #FFB703 ${flavorLevels.sweet}%, var(--bg-dark) ${flavorLevels.sweet}%, var(--bg-dark) 100%)` }}
                                             />
                                             <div className="slider-value">{flavorLevels.sweet}g</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="control-card">
-                                        <div className="control-label">
-                                            <i className="fas fa-flask" style={{ color: '#8338EC' }}></i>
-                                            Umami (MSG/Fish Sauce)
-                                        </div>
-                                        <div className="slider-container">
-                                            <input 
-                                                type="range" 
-                                                min="0" 
-                                                max="100" 
-                                                value={flavorLevels.umami}
-                                                onChange={(e) => updateFlavor('umami', e.target.value)}
-                                                className="slider"
-                                                style={{ background: `linear-gradient(to right, #8338EC 0%, #8338EC ${flavorLevels.umami}%, var(--bg-dark) ${flavorLevels.umami}%, var(--bg-dark) 100%)` }}
-                                            />
-                                            <div className="slider-value">{flavorLevels.umami}g</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2047,7 +1965,7 @@
                                                     Total Spices Added
                                                 </div>
                                                 <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'var(--secondary)' }}>
-                                                    {flavorLevels.spicy + flavorLevels.salty + flavorLevels.sweet + flavorLevels.umami}
+                                                    {flavorLevels.sweet}
                                                     <span style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}> g</span>
                                                 </div>
                                                 <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>
@@ -2122,10 +2040,7 @@
                                     }}>
                                         <div style={{ marginBottom: '0.5rem', fontWeight: '600' }}>Current Settings:</div>
                                         <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                                            <div>🌶️ Spicy: {flavorLevels.spicy}g</div>
-                                            <div>💧 Salty: {flavorLevels.salty}g</div>
                                             <div>🍬 Sweet: {flavorLevels.sweet}g</div>
-                                            <div>🧪 Umami: {flavorLevels.umami}g</div>
                                         </div>
                                     </div>
 
@@ -2494,6 +2409,7 @@
         // Recipe Card Component
         function RecipeCard({ recipe, onClick, user }) {
             const locked = recipe.isPremium && (!user || !user.isPremium);
+            const isFavorite = user?.favorites?.includes(recipe.id);
 
             return (
                 <div className="recipe-card" onClick={() => !locked && onClick(recipe)}>
@@ -2507,6 +2423,32 @@
                                 <i className="fas fa-crown"></i> Premium
                             </div>
                         )}
+                        <button 
+                            className="favorite-btn"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                // Toggle favorite logic would go here
+                                console.log('Toggle favorite for:', recipe.id);
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '10px',
+                                right: '10px',
+                                background: 'rgba(0,0,0,0.6)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                color: isFavorite ? '#EF476F' : 'white',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.2rem'
+                            }}
+                        >
+                            <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
+                        </button>
                     </div>
                     <div className="recipe-content">
                         <h3 className="recipe-title">{recipe.title}</h3>
@@ -2552,6 +2494,8 @@
         // Recipe Detail Modal
         function RecipeModal({ recipe, onClose, user }) {
             if (!recipe) return null;
+            
+            const isFavorite = user?.favorites?.includes(recipe.id);
 
             return (
                 <div className="modal-overlay" onClick={onClose}>
@@ -2625,9 +2569,38 @@
                                 </ol>
                             </div>
 
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                <button 
+                                    className="btn" 
+                                    style={{ 
+                                        background: isFavorite ? '#EF476F' : 'var(--bg-light)',
+                                        color: isFavorite ? 'white' : 'var(--text-primary)',
+                                        border: '1px solid var(--border)'
+                                    }}
+                                    onClick={() => {
+                                        // Toggle favorite logic
+                                        console.log('Toggle favorite:', recipe.id);
+                                    }}
+                                >
+                                    <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
+                                    {isFavorite ? ' Favorited' : ' Favorite'}
+                                </button>
+                                <button 
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        // Add to meal planner logic
+                                        console.log('Add to meal planner:', recipe.id);
+                                        alert('Added to Meal Planner!');
+                                    }}
+                                >
+                                    <i className="fas fa-calendar-plus"></i>
+                                    Add to Meal Planner
+                                </button>
+                            </div>
+                            
                             <button className="btn btn-primary" style={{ width: '100%' }}>
-                                <i className="fas fa-robot"></i>
-                                Start Cooking with AI Guidance
+                                <i className="fas fa-play"></i>
+                                Start Cooking with Guidance
                             </button>
                         </div>
                     </div>
@@ -2656,6 +2629,9 @@
         });
 
         setIsConnected(true);
+        setShowConnectionModal(false);
+        setSelectedDevice(null);
+        alert(`Connected to ${device.name} via Bluetooth!`);
     } catch (err) {
         alert("Connection failed: " + err.message);
     }
@@ -2667,9 +2643,9 @@
                 <>
                     <div className="hero">
                         <div className="hero-content">
-                            <h1>Your Personal<br/>Cooking Companion</h1>
+                            <h1>Flavor Station</h1>
                             <p>
-                                Smart device integration • AI-powered recipes • Personalized flavors
+                                Smart device integration • Personalized flavors
                             </p>
                         </div>
                     </div>
@@ -2697,113 +2673,90 @@
                         ))}
                     </div>
 
-                    {user?.isPremium && (
-                        <div style={{ marginBottom: '3rem' }}>
-                            <div className="section-header">
-                                <h2 className="section-title">Premium Features</h2>
-                                <p className="section-subtitle">Exclusive tools for premium members</p>
-                            </div>
-                            
-                            <div style={{ 
-                                display: 'grid', 
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-                                gap: '1.5rem' 
-                            }}>
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        🎯
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Nutrition Goals
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Set daily calorie and macro targets. Track your progress automatically.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        🗣️
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Voice Guidance
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Hands-free cooking with step-by-step voice instructions.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        🔄
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Smart Substitutions
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        AI suggests ingredient swaps based on what you have.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        📊
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Cooking Analytics
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Track your cooking habits and improve over time.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        👨‍🍳
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Chef's Tips
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Pro techniques and tricks for every recipe.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        💾
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Flavor Presets
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Save and load your favorite spice combinations.
-                                    </p>
-                                </div>
-                            </div>
+                    <div style={{ marginBottom: '3rem' }}>
+                        <div className="section-header">
+                            <h2 className="section-title">Premium Features</h2>
+                            <p className="section-subtitle">Exclusive tools for premium members</p>
                         </div>
-                    )}
-
-                    {!user?.isPremium && (
-                        <div className="subscription-banner">
-                            <div className="subscription-content">
-                                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                    Unlock Premium Features
-                                </h2>
-                                <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.9 }}>
-                                    Get access to 500+ premium recipes, AI meal planning, and advanced personalization
+                        
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                            gap: '1.5rem' 
+                        }}>
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    🎯
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Nutrition Goals
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Set daily calorie and macro targets. Track your progress automatically.
                                 </p>
-                                <button 
-                                    className="btn btn-primary"
-                                    style={{ background: 'white', color: 'var(--primary-dark)' }}
-                                    onClick={() => setCurrentPage('subscription')}
-                                >
-                                    <i className="fas fa-crown"></i>
-                                    Upgrade to Premium
-                                </button>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    🗣️
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Voice Guidance
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Hands-free cooking with step-by-step voice instructions.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    🔄
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Smart Substitutions
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    AI suggests ingredient swaps based on what you have.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    📊
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Cooking Analytics
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Track your cooking habits and improve over time.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    👨‍🍳
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Chef's Tips
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Pro techniques and tricks for every recipe.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    💾
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Flavor Presets
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Save and load your favorite spice combinations.
+                                </p>
                             </div>
                         </div>
-                    )}
+                    </div>
 
                     {selectedRecipe && (
                         <RecipeModal 

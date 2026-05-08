@@ -1530,10 +1530,7 @@
         // Device Control Component
         function DeviceControl({ isConnected, setIsConnected, selectedRecipe, user }) {
             const [flavorLevels, setFlavorLevels] = useState({
-                spicy: 50,
-                salty: 30,
-                sweet: 40,
-                umami: 60
+                sweet: 40
             });
             const [isDispensing, setIsDispensing] = useState(false);
             const [showConnectionModal, setShowConnectionModal] = useState(false);
@@ -1542,9 +1539,9 @@
             const [isScanning, setIsScanning] = useState(false);
             const [selectedDevice, setSelectedDevice] = useState(null);
             const [savedPresets, setSavedPresets] = useState([
-                { id: 1, name: 'Mild & Balanced', levels: { spicy: 20, salty: 30, sweet: 25, umami: 35 } },
-                { id: 2, name: 'Extra Spicy', levels: { spicy: 85, salty: 40, sweet: 15, umami: 50 } },
-                { id: 3, name: 'Sweet & Savory', levels: { spicy: 25, salty: 45, sweet: 60, umami: 55 } }
+                { id: 1, name: 'Mild Sweet', levels: { sweet: 25 } },
+                { id: 2, name: 'Extra Sweet', levels: { sweet: 85 } },
+                { id: 3, name: 'Balanced', levels: { sweet: 50 } }
             ]);
             const [showPresetModal, setShowPresetModal] = useState(false);
             const [presetName, setPresetName] = useState('');
@@ -1557,7 +1554,7 @@
                 let baseCalories = selectedRecipe.baseCalories;
                 
                 // Each flavor level represents grams of that ingredient added
-                // Sweet (sugar): 4 calories per gram
+                // Sweet (sugar): 4 calories per gram (only flavor module available)
                 const sweetGrams = flavorLevels.sweet;
                 const sweetCalories = sweetGrams * 4;
                 
@@ -1569,7 +1566,7 @@
 
             // Get recommended amounts based on recipe type
             const getRecommendedLevels = () => {
-                if (!selectedRecipe) return { sweet: 25 };
+                if (!selectedRecipe) return { sweet: 20 };
                 
                 // Different cuisines have different sweet flavor profiles
                 if (selectedRecipe.category === 'Thai') {
@@ -1619,6 +1616,23 @@
                 setSavedPresets(savedPresets.filter(p => p.id !== presetId));
             };
 
+            const confirmWifiIP = () => {
+                if (!wifiIP.trim()) {
+                    alert('Please enter an IP address');
+                    return;
+                }
+                
+                const wifiDevice = {
+                    id: 'wifi-' + wifiIP,
+                    name: `Flavor Station (${wifiIP})`,
+                    signal: -40,
+                    type: 'wifi',
+                    ipAddress: wifiIP
+                };
+                setAvailableDevices([wifiDevice]);
+                setShowWifiInput(false);
+            };
+
             const updateFlavor = (flavor, value) => {
                 setFlavorLevels(prev => ({ ...prev, [flavor]: value }));
             };
@@ -1626,7 +1640,7 @@
             const startDispensing = async () => {
                 setIsDispensing(true);
                 
-                // Prepare command data
+                // Prepare command data - only sweet flavor for single module
                 const commandData = {
                     action: 'dispense',
                     recipe: selectedRecipe?.title || 'Custom',
@@ -1665,6 +1679,13 @@
                     window.flavorStationBLE.device.gatt.disconnect();
                     window.flavorStationBLE = null;
                     console.log('Bluetooth disconnected');
+                }
+                
+                // Disconnect WiFi
+                if (window.flavorStationWS) {
+                    window.flavorStationWS.close();
+                    window.flavorStationWS = null;
+                    console.log('WiFi disconnected');
                 }
                 
                 setIsConnected(false);
@@ -1788,7 +1809,7 @@
                                     }
                                 }}
                             >
-                                <i className={`fas fa-${isConnected ? 'plug' : 'bluetooth'}`}></i>
+                                <i className={`fas fa-${isConnected ? 'plug' : 'wifi'}`}></i>
                                 {isConnected ? 'Disconnect' : 'Connect Device'}
                             </button>
                         </div>
@@ -2044,6 +2065,103 @@
                         </div>
                     )}
 
+                    {/* WiFi IP Input Modal */}
+                    {showWifiInput && (
+                        <div className="modal-overlay" onClick={() => setShowWifiInput(false)}>
+                            <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+                                <div className="modal-header">
+                                    <h2 className="modal-title">
+                                        <i className="fas fa-wifi"></i> WiFi Connection
+                                    </h2>
+                                    <button className="close-btn" onClick={() => setShowWifiInput(false)}>
+                                        <i className="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <div style={{ 
+                                        padding: '1rem', 
+                                        background: 'rgba(42, 157, 143, 0.1)',
+                                        border: '1px solid var(--secondary)',
+                                        borderRadius: '8px',
+                                        marginBottom: '1.5rem',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        <strong>📡 Make sure:</strong>
+                                        <ul style={{ marginTop: '0.5rem', marginBottom: 0, paddingLeft: '1.5rem' }}>
+                                            <li>Your ESP32 is connected to WiFi</li>
+                                            <li>You're on the same network</li>
+                                            <li>WebSocket server is running on port 81</li>
+                                        </ul>
+                                    </div>
+
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
+                                            ESP32 IP Address
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={wifiIP}
+                                            onChange={(e) => setWifiIP(e.target.value)}
+                                            placeholder="192.168.1.100"
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.875rem',
+                                                background: 'var(--bg-light)',
+                                                border: '1px solid var(--border)',
+                                                borderRadius: '8px',
+                                                color: 'var(--text-primary)',
+                                                fontSize: '1.1rem',
+                                                fontFamily: 'monospace',
+                                                textAlign: 'center'
+                                            }}
+                                        />
+                                        <div style={{ 
+                                            marginTop: '0.5rem', 
+                                            fontSize: '0.85rem', 
+                                            color: 'var(--text-secondary)',
+                                            textAlign: 'center'
+                                        }}>
+                                            Check your router settings or Serial Monitor
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', gap: '1rem' }}>
+                                        <button 
+                                            className="btn btn-secondary"
+                                            onClick={() => setShowWifiInput(false)}
+                                            style={{ flex: 1 }}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            className="btn btn-primary"
+                                            onClick={confirmWifiIP}
+                                            style={{ flex: 1 }}
+                                        >
+                                            <i className="fas fa-plug"></i> Connect
+                                        </button>
+                                    </div>
+
+                                    <div style={{ 
+                                        marginTop: '1.5rem',
+                                        padding: '1rem',
+                                        background: 'var(--bg-light)',
+                                        borderRadius: '8px',
+                                        fontSize: '0.85rem',
+                                        color: 'var(--text-secondary)'
+                                    }}>
+                                        <strong>How to find IP address:</strong>
+                                        <ol style={{ marginTop: '0.5rem', paddingLeft: '1.5rem', marginBottom: 0 }}>
+                                            <li>Open Arduino Serial Monitor</li>
+                                            <li>Look for "IP Address: xxx.xxx.xxx.xxx"</li>
+                                            <li>Or check your router's connected devices list</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Setup Guide Modal */}
                     {showSetupGuide && (
                         <div className="modal-overlay" onClick={() => setShowSetupGuide(false)}>
@@ -2118,8 +2236,16 @@
                                                     fontSize: '0.85rem'
                                                 }}>beb5483e-36e1-4688-b7f5-ea07361b26a8</code>
                                             </p>
+                                            <p style={{ marginBottom: '0.5rem' }}>
+                                                <strong>WiFi WebSocket Port:</strong> <code style={{ 
+                                                    background: 'var(--bg-dark)', 
+                                                    padding: '0.25rem 0.5rem', 
+                                                    borderRadius: '4px',
+                                                    fontSize: '0.85rem'
+                                                }}>81</code>
+                                            </p>
                                             <p style={{ marginTop: '1rem' }}>
-                                                <strong>Data Format:</strong> JSON with action, recipe, flavors (sweet in grams)
+                                                <strong>Data Format:</strong> JSON with action, recipe, flavors (spicy, salty, sweet, umami in grams)
                                             </p>
                                         </div>
                                     </div>
@@ -2136,6 +2262,7 @@
                                         <ul style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
                                             <li>Make sure your ESP32 is in pairing mode</li>
                                             <li>Check that device name starts with "Flavor", "ESP32", or "FlavorStation"</li>
+                                            <li>For WiFi: Ensure both devices are on the same network</li>
                                             <li>Try refreshing the page if connection fails</li>
                                             <li>Check browser console (F12) for detailed error messages</li>
                                         </ul>
@@ -2282,6 +2409,7 @@
         // Recipe Card Component
         function RecipeCard({ recipe, onClick, user }) {
             const locked = recipe.isPremium && (!user || !user.isPremium);
+            const isFavorite = user?.favorites?.includes(recipe.id);
 
             return (
                 <div className="recipe-card" onClick={() => !locked && onClick(recipe)}>
@@ -2295,6 +2423,32 @@
                                 <i className="fas fa-crown"></i> Premium
                             </div>
                         )}
+                        <button 
+                            className="favorite-btn"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                // Toggle favorite logic would go here
+                                console.log('Toggle favorite for:', recipe.id);
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '10px',
+                                right: '10px',
+                                background: 'rgba(0,0,0,0.6)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                color: isFavorite ? '#EF476F' : 'white',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.2rem'
+                            }}
+                        >
+                            <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
+                        </button>
                     </div>
                     <div className="recipe-content">
                         <h3 className="recipe-title">{recipe.title}</h3>
@@ -2340,6 +2494,8 @@
         // Recipe Detail Modal
         function RecipeModal({ recipe, onClose, user }) {
             if (!recipe) return null;
+            
+            const isFavorite = user?.favorites?.includes(recipe.id);
 
             return (
                 <div className="modal-overlay" onClick={onClose}>
@@ -2413,9 +2569,38 @@
                                 </ol>
                             </div>
 
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                <button 
+                                    className="btn" 
+                                    style={{ 
+                                        background: isFavorite ? '#EF476F' : 'var(--bg-light)',
+                                        color: isFavorite ? 'white' : 'var(--text-primary)',
+                                        border: '1px solid var(--border)'
+                                    }}
+                                    onClick={() => {
+                                        // Toggle favorite logic
+                                        console.log('Toggle favorite:', recipe.id);
+                                    }}
+                                >
+                                    <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
+                                    {isFavorite ? ' Favorited' : ' Favorite'}
+                                </button>
+                                <button 
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        // Add to meal planner logic
+                                        console.log('Add to meal planner:', recipe.id);
+                                        alert('Added to Meal Planner!');
+                                    }}
+                                >
+                                    <i className="fas fa-calendar-plus"></i>
+                                    Add to Meal Planner
+                                </button>
+                            </div>
+                            
                             <button className="btn btn-primary" style={{ width: '100%' }}>
-                                <i className="fas fa-robot"></i>
-                                Start Cooking with AI Guidance
+                                <i className="fas fa-play"></i>
+                                Start Cooking with Guidance
                             </button>
                         </div>
                     </div>
@@ -2444,6 +2629,9 @@
         });
 
         setIsConnected(true);
+        setShowConnectionModal(false);
+        setSelectedDevice(null);
+        alert(`Connected to ${device.name} via Bluetooth!`);
     } catch (err) {
         alert("Connection failed: " + err.message);
     }
@@ -2455,9 +2643,9 @@
                 <>
                     <div className="hero">
                         <div className="hero-content">
-                            <h1>Your Personal<br/>Cooking Companion</h1>
+                            <h1>Flavor Station</h1>
                             <p>
-                                Smart device integration • AI-powered recipes • Personalized flavors
+                                Smart device integration • Personalized flavors
                             </p>
                         </div>
                     </div>
@@ -2485,113 +2673,90 @@
                         ))}
                     </div>
 
-                    {user?.isPremium && (
-                        <div style={{ marginBottom: '3rem' }}>
-                            <div className="section-header">
-                                <h2 className="section-title">Premium Features</h2>
-                                <p className="section-subtitle">Exclusive tools for premium members</p>
-                            </div>
-                            
-                            <div style={{ 
-                                display: 'grid', 
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-                                gap: '1.5rem' 
-                            }}>
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        🎯
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Nutrition Goals
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Set daily calorie and macro targets. Track your progress automatically.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        🗣️
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Voice Guidance
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Hands-free cooking with step-by-step voice instructions.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        🔄
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Smart Substitutions
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        AI suggests ingredient swaps based on what you have.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        📊
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Cooking Analytics
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Track your cooking habits and improve over time.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        👨‍🍳
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Chef's Tips
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Pro techniques and tricks for every recipe.
-                                    </p>
-                                </div>
-
-                                <div className="control-card" style={{ padding: '2rem' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                        💾
-                                    </div>
-                                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-                                        Flavor Presets
-                                    </h3>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                        Save and load your favorite spice combinations.
-                                    </p>
-                                </div>
-                            </div>
+                    <div style={{ marginBottom: '3rem' }}>
+                        <div className="section-header">
+                            <h2 className="section-title">Premium Features</h2>
+                            <p className="section-subtitle">Exclusive tools for premium members</p>
                         </div>
-                    )}
-
-                    {!user?.isPremium && (
-                        <div className="subscription-banner">
-                            <div className="subscription-content">
-                                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-                                    Unlock Premium Features
-                                </h2>
-                                <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.9 }}>
-                                    Get access to 500+ premium recipes, AI meal planning, and advanced personalization
+                        
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                            gap: '1.5rem' 
+                        }}>
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    🎯
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Nutrition Goals
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Set daily calorie and macro targets. Track your progress automatically.
                                 </p>
-                                <button 
-                                    className="btn btn-primary"
-                                    style={{ background: 'white', color: 'var(--primary-dark)' }}
-                                    onClick={() => setCurrentPage('subscription')}
-                                >
-                                    <i className="fas fa-crown"></i>
-                                    Upgrade to Premium
-                                </button>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    🗣️
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Voice Guidance
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Hands-free cooking with step-by-step voice instructions.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    🔄
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Smart Substitutions
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    AI suggests ingredient swaps based on what you have.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    📊
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Cooking Analytics
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Track your cooking habits and improve over time.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    👨‍🍳
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Chef's Tips
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Pro techniques and tricks for every recipe.
+                                </p>
+                            </div>
+
+                            <div className="control-card" style={{ padding: '2rem' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                    💾
+                                </div>
+                                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                                    Flavor Presets
+                                </h3>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                    Save and load your favorite spice combinations.
+                                </p>
                             </div>
                         </div>
-                    )}
+                    </div>
 
                     {selectedRecipe && (
                         <RecipeModal 
