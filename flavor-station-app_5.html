@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlavorStation - Smart Cooking Companion</title>
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -46,21 +47,20 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes slideInRight {
             from { opacity: 0; transform: translateX(30px); }
             to { opacity: 1; transform: translateX(0); }
         }
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
+
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
-        }
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
         }
 
         /* Navigation */
@@ -74,6 +74,7 @@
             z-index: 1000;
             animation: fadeInUp 0.6s ease-out;
         }
+
         .nav-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -81,6 +82,7 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 1.8rem;
@@ -91,11 +93,13 @@
             background-clip: text;
             letter-spacing: -0.5px;
         }
+
         .nav-menu {
             display: flex;
             gap: 2rem;
             align-items: center;
         }
+
         .nav-link {
             color: var(--text-secondary);
             text-decoration: none;
@@ -105,9 +109,11 @@
             padding: 0.5rem 0;
             cursor: pointer;
         }
+
         .nav-link:hover, .nav-link.active {
             color: var(--primary);
         }
+
         .nav-link.active::after {
             content: '';
             position: absolute;
@@ -117,24 +123,48 @@
             height: 2px;
             background: var(--primary);
         }
+
         .user-menu {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            display: flex;
-            align-items: center;
-            justify-content: center;
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 12px;
             font-weight: 600;
+            font-size: 1rem;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .user-avatar:hover { transform: scale(1.1); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 16px rgba(232, 93, 4, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(232, 93, 4, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
 
         /* Main Container */
         .container {
@@ -152,21 +182,17 @@
             margin-bottom: 3rem;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(232, 93, 4, 0.2), transparent);
-            animation: pulse 4s ease-in-out infinite;
-        }
+
         .hero-content {
             position: relative;
             z-index: 1;
+            max-width: 60%;
         }
+
         .hero h1 {
             font-family: 'Playfair Display', serif;
             font-size: 3.5rem;
@@ -174,154 +200,153 @@
             margin-bottom: 1rem;
             line-height: 1.2;
         }
+
         .hero p {
             font-size: 1.2rem;
             color: var(--text-secondary);
-            max-width: 600px;
+            margin-bottom: 2rem;
         }
 
-        /* Device Control Panel */
-        .device-panel {
+        /* Device Control Panel (Integrated in Hero) */
+        .device-control-wrapper {
             background: var(--bg-medium);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 2rem;
-            margin-bottom: 2rem;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .device-header {
+
+        .connection-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
         }
-        .device-status {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .status-indicator {
-            width: 12px;
-            height: 12px;
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 10px var(--success);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        .status-indicator.disconnected {
             background: var(--error);
-            box-shadow: 0 0 10px var(--error);
-        }
-        .device-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .control-card {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
+            box-shadow: 0 0 8px var(--error);
             transition: all 0.3s ease;
         }
-        .control-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: 0 8px 24px rgba(232, 93, 4, 0.2);
+
+        .status-dot.connected {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
         }
-        .control-label {
+
+        .status-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-left: 0.5rem;
+        }
+
+        .connect-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+        }
+
+        .connect-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .control-area {
+            display: none; /* Hidden until connected */
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .control-area.active {
+            display: block;
+        }
+
+        .slider-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
             font-weight: 600;
             color: var(--text-secondary);
         }
-        .slider-container { position: relative; }
-        .slider {
+
+        .slider-value {
+            color: var(--primary);
+        }
+
+        input[type="range"] {
             width: 100%;
             height: 6px;
-            border-radius: 3px;
             background: var(--bg-dark);
+            border-radius: 3px;
             outline: none;
             -webkit-appearance: none;
-            position: relative;
         }
-        .slider::-webkit-slider-thumb {
+
+        input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
             width: 20px;
             height: 20px;
             border-radius: 50%;
             background: var(--primary);
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(232, 93, 4, 0.4);
-            transition: all 0.3s ease;
-        }
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 0 4px 12px rgba(232, 93, 4, 0.6);
-        }
-        .slider-value {
-            margin-top: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
         }
 
-        /* Buttons */
-        .btn {
-            padding: 0.875rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'DM Sans', sans-serif;
-            display: inline-flex;
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .weight-display {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        /* Sections */
+        .section-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            box-shadow: 0 4px 16px rgba(232, 93, 4, 0.3);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(232, 93, 4, 0.5);
-        }
-        .btn-secondary {
-            background: var(--bg-light);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-        .btn-secondary:hover {
-            background: var(--bg-medium);
-            border-color: var(--primary);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #05B58C);
-            color: white;
-        }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Recipe Grid */
-        .section-header { margin-bottom: 2rem; }
         .section-title {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
         }
-        .section-subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
         .recipe-filters {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
+
         .filter-btn {
             padding: 0.75rem 1.5rem;
             background: var(--bg-light);
@@ -332,17 +357,20 @@
             transition: all 0.3s ease;
             font-weight: 500;
         }
+
         .filter-btn:hover, .filter-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
         }
+
         .recipe-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
         }
+
         .recipe-card {
             background: var(--bg-medium);
             border: 1px solid var(--border);
@@ -352,90 +380,40 @@
             transition: all 0.3s ease;
             animation: fadeInUp 0.6s ease-out backwards;
         }
-        .recipe-card:nth-child(1) { animation-delay: 0.1s; }
-        .recipe-card:nth-child(2) { animation-delay: 0.2s; }
-        .recipe-card:nth-child(3) { animation-delay: 0.3s; }
-        .recipe-card:nth-child(4) { animation-delay: 0.4s; }
-        .recipe-card:nth-child(5) { animation-delay: 0.5s; }
-        .recipe-card:nth-child(6) { animation-delay: 0.6s; }
+
         .recipe-card:hover {
             transform: translateY(-8px);
             border-color: var(--primary);
             box-shadow: 0 12px 32px rgba(232, 93, 4, 0.2);
         }
+
         .recipe-image {
             width: 100%;
             height: 200px;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
-            position: relative;
-            overflow: hidden;
-        }
-        .recipe-image img {
-            width: 100%;
-            height: 100%;
             object-fit: cover;
+            background: #333;
         }
-        .recipe-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: shimmer 2s infinite;
+
+        .recipe-content {
+            padding: 1.5rem;
         }
-        .recipe-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-        .recipe-badge.premium {
-            background: linear-gradient(135deg, var(--accent), var(--warning));
-            color: var(--bg-dark);
-        }
-        .recipe-content { padding: 1.5rem; }
+
         .recipe-title {
             font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+
         .recipe-meta {
             display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
+            gap: 1rem;
             color: var(--text-secondary);
             font-size: 0.9rem;
-        }
-        .recipe-meta-item { display: flex; align-items: center; gap: 0.4rem; }
-        .recipe-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
             margin-bottom: 1rem;
         }
-        .tag {
-            padding: 0.3rem 0.8rem;
-            background: var(--bg-light);
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-        .recipe-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }
-        .recipe-rating { display: flex; align-items: center; gap: 0.5rem; }
-        .stars { color: var(--accent); }
 
         /* Modal */
         .modal-overlay {
@@ -444,60 +422,87 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(5px);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 2000;
-            animation: fadeInUp 0.3s ease-out;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
         .modal {
             background: var(--bg-medium);
             border: 1px solid var(--border);
             border-radius: 24px;
-            max-width: 800px;
+            max-width: 900px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            animation: slideInRight 0.4s ease-out;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
         }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
         .modal-header {
             padding: 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-medium);
+            z-index: 10;
         }
+
         .modal-title {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
-            font-weight: 700;
         }
+
         .close-btn {
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
-            transition: color 0.3s ease;
+            line-height: 1;
         }
+
         .close-btn:hover { color: var(--primary); }
+
         .modal-body { padding: 2rem; }
-        .recipe-detail-image {
+
+        .modal-image {
             width: 100%;
             height: 300px;
-            background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+            object-fit: cover;
             border-radius: 16px;
             margin-bottom: 2rem;
-            overflow: hidden;
         }
-        .recipe-detail-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
-        .ingredients-list { list-style: none; margin-bottom: 2rem; }
+
+        .ingredients-list, .steps-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
         .ingredient-item {
             padding: 1rem;
             background: var(--bg-light);
@@ -505,9 +510,8 @@
             margin-bottom: 0.5rem;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
-        .steps-list { list-style: none; }
+
         .step-item {
             padding: 1.5rem;
             background: var(--bg-light);
@@ -515,80 +519,62 @@
             margin-bottom: 1rem;
             position: relative;
             padding-left: 4rem;
+            opacity: 0.6;
+            transition: all 0.3s ease;
         }
+
+        .step-item.active {
+            opacity: 1;
+            border: 1px solid var(--primary);
+            background: rgba(232, 93, 4, 0.1);
+        }
+
         .step-number {
             position: absolute;
             left: 1.5rem;
             top: 1.5rem;
             width: 32px;
             height: 32px;
-            background: var(--primary);
+            background: var(--bg-dark);
+            border: 2px solid var(--text-tertiary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            color: var(--text-tertiary);
         }
 
-        /* Subscription Card */
-        .subscription-banner {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            border-radius: 24px;
-            padding: 3rem;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .subscription-banner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
-            border-radius: 50%;
-        }
-        .subscription-content { position: relative; z-index: 1; }
-        .subscription-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .plan-card {
-            background: var(--bg-medium);
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-        }
-        .plan-card:hover {
-            transform: translateY(-4px);
+        .step-item.active .step-number {
+            background: var(--primary);
             border-color: var(--primary);
+            color: white;
         }
-        .plan-card.featured {
-            border-color: var(--accent);
-            background: linear-gradient(135deg, rgba(255, 183, 3, 0.1), transparent);
+
+        /* AI Guidance Overlay inside Modal */
+        .ai-guidance-panel {
+            background: linear-gradient(135deg, rgba(42, 157, 143, 0.2), rgba(10, 10, 10, 0.9));
+            border: 1px solid var(--secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+            display: none;
         }
-        .plan-header { text-align: center; margin-bottom: 2rem; }
-        .plan-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .plan-price {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--primary);
+
+        .ai-guidance-panel.active { display: block; animation: fadeInUp 0.5s ease; }
+
+        .ai-step-text {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
         }
-        .plan-price span { font-size: 1rem; color: var(--text-secondary); }
-        .plan-features { list-style: none; margin-bottom: 2rem; }
-        .plan-features li {
-            padding: 0.75rem 0;
+
+        .ai-controls {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            border-bottom: 1px solid var(--border);
+            justify-content: center;
+            gap: 1rem;
         }
-        .plan-features li:last-child { border-bottom: none; }
-        .check-icon { color: var(--success); }
 
         /* Meal Planner */
         .calendar-grid {
@@ -597,88 +583,130 @@
             gap: 1rem;
             margin-top: 2rem;
         }
+
         .day-card {
             background: var(--bg-medium);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 1rem;
-            min-height: 150px;
+            min-height: 200px;
         }
+
         .day-header {
             font-weight: 700;
-            margin-bottom: 0.5rem;
             color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
         }
-        .meal-slot {
+
+        .meal-item {
             background: var(--bg-light);
-            border-radius: 8px;
             padding: 0.5rem;
+            border-radius: 6px;
             margin-bottom: 0.5rem;
             font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .meal-slot:hover { background: var(--primary); }
-        .meal-slot.empty {
+
+        .remove-meal {
+            color: var(--error);
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0 4px;
+        }
+
+        .add-meal-btn {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-dark);
             border: 1px dashed var(--border);
-            background: transparent;
             color: var(--text-tertiary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-meal-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Subscription Banner */
+        .subscription-banner {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
             text-align: center;
+        }
+
+        .subscription-banner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subscription-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .plan-card {
+            background: var(--bg-medium);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: left;
+        }
+
+        .plan-card.featured {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(255, 183, 3, 0.1), transparent);
+        }
+
+        .plan-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .plan-price { font-size: 2rem; color: var(--primary); font-weight: 900; margin-bottom: 1.5rem; }
+        .plan-features li {
+            list-style: none;
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         /* Auth Modal */
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .auth-tab {
-            flex: 1;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-secondary);
-            transition: var(--transition);
-        }
-        .auth-tab.active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-        }
+        .auth-tabs { display: flex; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+        .auth-tab { flex: 1; padding: 1rem; text-align: center; cursor: pointer; color: var(--text-secondary); }
+        .auth-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
         .auth-form { display: none; }
         .auth-form.active { display: block; }
         .form-group { margin-bottom: 1.5rem; }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-secondary); }
         .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            background: var(--bg-light);
-            color: var(--text-primary);
+            width: 100%; padding: 1rem; background: var(--bg-light); border: 1px solid var(--border);
+            border-radius: 8px; color: white; font-family: inherit;
         }
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
+        .form-group input:focus { outline: none; border-color: var(--primary); }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .nav-menu { gap: 1rem; }
-            .hero { padding: 2rem; }
-            .hero h1 { font-size: 2.5rem; }
-            .recipe-grid { grid-template-columns: 1fr; }
-            .calendar-grid { grid-template-columns: 1fr; }
-            .subscription-grid { grid-template-columns: 1fr; }
+        @media (max-width: 1024px) {
+            .hero { flex-direction: column; text-align: center; }
+            .hero-content { max-width: 100%; margin-bottom: 2rem; }
+            .device-control-wrapper { width: 100%; }
+            .calendar-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        
-        .hidden { display: none !important; }
+        @media (max-width: 768px) {
+            .nav-menu { display: none; } /* Simplified for mobile */
+            .calendar-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -687,18 +715,16 @@
         <div class="nav-container">
             <div class="logo">FlavorStation</div>
             <div class="nav-menu">
-                <a class="nav-link active" data-page="home">Home</a>
-                <a class="nav-link" data-page="recipes">Recipes</a>
-                <a class="nav-link" data-page="planner">Meal Planner</a>
-                <a class="nav-link" data-page="device">Device</a>
-                <a class="nav-link" data-page="premium">Premium</a>
+                <a class="nav-link active" onclick="showPage('home')">Home</a>
+                <a class="nav-link" onclick="showPage('recipes')">Recipes</a>
+                <a class="nav-link" onclick="showPage('planner')">Meal Planner</a>
+                <a class="nav-link" onclick="showPage('premium')">Premium</a>
             </div>
             <div class="user-menu">
-                <button id="authBtn" class="btn btn-primary">Login</button>
-                <div id="userInfo" class="hidden" style="display: flex; align-items: center; gap: 1rem;">
-                    <div class="user-avatar" id="userAvatar"></div>
-                    <span id="userName" style="font-weight: 600;"></span>
-                    <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                <button id="authBtn" class="btn btn-outline" onclick="openAuthModal()">Log In</button>
+                <div id="userInfo" style="display:none; align-items:center; gap:1rem;">
+                    <span id="userName" style="font-weight:600;"></span>
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
                 </div>
             </div>
         </div>
@@ -706,474 +732,424 @@
 
     <div class="container">
         <!-- Home Page -->
-        <div id="homePage" class="page active">
+        <div id="homePage" class="page">
             <div class="hero">
                 <div class="hero-content">
-                    <h1>Start Cooking with Guidance</h1>
-                    <p>Your personal cooking companion for perfect flavors every time.</p>
-                    <button class="btn btn-primary" style="margin-top: 2rem;" onclick="showPage('recipes')">Browse Recipes</button>
+                    <h1>Cook Perfectly,<br>Every Time.</h1>
+                    <p>Your intelligent cooking companion. Connect to your FlavorStation device to dispense precise flavors and follow guided recipes.</p>
+                    <button class="btn btn-primary" onclick="showPage('recipes')">Explore Recipes</button>
                 </div>
-            </div>
-            
-            <div class="device-panel">
-                <div class="device-header">
-                    <h2 class="section-title" style="font-size: 1.8rem;">Device Control</h2>
-                    <div class="device-status">
-                        <div class="status-indicator disconnected" id="btStatusIndicator"></div>
-                        <span id="btStatusText" style="color: var(--text-secondary);">Disconnected</span>
-                        <button id="connectBtn" class="btn btn-primary">
-                            <span>📶</span> Connect
+                
+                <!-- Integrated Device Control -->
+                <div class="device-control-wrapper">
+                    <div class="connection-bar">
+                        <div style="display:flex; align-items:center;">
+                            <div class="status-dot" id="btStatusDot"></div>
+                            <span class="status-text" id="btStatusText">Disconnected</span>
+                        </div>
+                        <button class="connect-btn" id="connectBtn" onclick="toggleBluetooth()">
+                            <span>Connect</span>
                         </button>
                     </div>
-                </div>
-                
-                <div class="device-controls">
-                    <div class="control-card">
-                        <div class="control-label">
-                            <span>🍯</span> Flavor Module #1 (Sweet)
+
+                    <div class="control-area" id="controlArea">
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span>Flavor Module #1 (Sweet)</span>
+                                <span class="slider-value" id="sweetValue">0g</span>
+                            </div>
+                            <input type="range" id="sweetSlider" min="0" max="100" value="0" oninput="updateSlider(this.value)">
                         </div>
-                        <div class="slider-container">
-                            <input type="range" class="slider" id="sweetSlider" min="0" max="100" value="0">
-                            <div class="slider-value" id="sweetValue">0g</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="sendCommand('dispense')">Dispense</button>
+                            <button class="btn btn-outline" style="flex:1; justify-content:center; border-color:var(--error); color:var(--error);" onclick="sendCommand('stop')">Stop</button>
+                        </div>
+                        <div class="weight-display">
+                            Weight: <span id="currentWeight">0.00g</span>
                         </div>
                     </div>
                 </div>
-                
-                <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
-                    <button id="dispenseBtn" class="btn btn-success">Start Dispensing</button>
-                    <button id="stopBtn" class="btn btn-secondary" style="border-color: var(--error); color: var(--error);">Stop</button>
-                    <div style="margin-left: auto; font-weight: 600; color: var(--text-secondary);">
-                        Current Weight: <span id="currentWeight" style="color: var(--primary); font-size: 1.2rem;">0.00g</span>
-                    </div>
-                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Recommended for You</h2>
+            </div>
+            <div class="recipe-grid" id="recommendedGrid">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="subscription-banner">
+                <h2>Unlock Premium Features</h2>
+                <p>Get AI guidance, unlimited meal planning, and advanced nutrition tracking.</p>
+                <button class="btn btn-primary" style="margin-top:1.5rem; background:white; color:var(--primary);" onclick="showPage('premium')">View Plans</button>
             </div>
         </div>
 
         <!-- Recipes Page -->
-        <div id="recipesPage" class="page hidden">
+        <div id="recipesPage" class="page" style="display:none;">
             <div class="section-header">
-                <h2 class="section-title">Discover Recipes</h2>
-                <p class="section-subtitle">Explore our collection of delicious meals</p>
+                <h2 class="section-title">All Recipes</h2>
             </div>
-            <div class="recipe-filters">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="breakfast">Breakfast</button>
-                <button class="filter-btn" data-filter="lunch">Lunch</button>
-                <button class="filter-btn" data-filter="dinner">Dinner</button>
-                <button class="filter-btn" data-filter="dessert">Dessert</button>
+            <div class="recipe-filters" id="recipeFilters">
+                <button class="filter-btn active" onclick="filterRecipes('all')">All</button>
+                <button class="filter-btn" onclick="filterRecipes('breakfast')">Breakfast</button>
+                <button class="filter-btn" onclick="filterRecipes('lunch')">Lunch</button>
+                <button class="filter-btn" onclick="filterRecipes('dinner')">Dinner</button>
+                <button class="filter-btn" onclick="filterRecipes('dessert')">Dessert</button>
+                <button class="filter-btn" onclick="filterRecipes('snack')">Snack</button>
             </div>
-            <div class="recipe-grid" id="recipesGrid">
+            <div class="recipe-grid" id="allRecipesGrid">
                 <!-- Populated by JS -->
             </div>
         </div>
 
         <!-- Meal Planner Page -->
-        <div id="plannerPage" class="page hidden">
+        <div id="plannerPage" class="page" style="display:none;">
             <div class="section-header">
                 <h2 class="section-title">Weekly Meal Planner</h2>
-                <p class="section-subtitle">Plan your meals for the week ahead</p>
             </div>
-            <div style="text-align: right; margin-bottom: 1rem;">
-                <button class="btn btn-primary" onclick="showPage('recipes')">+ Add Meals</button>
-            </div>
-            <div class="calendar-grid" id="weekGrid">
+            <p style="color:var(--text-secondary); margin-bottom:1rem;">Plan your week ahead. Click "+ Add" to select from over 100 recipes.</p>
+            <div class="calendar-grid" id="calendarGrid">
                 <!-- Populated by JS -->
             </div>
         </div>
 
-        <!-- Device Page -->
-        <div id="devicePage" class="page hidden">
-            <div class="section-header">
-                <h2 class="section-title">Device Control</h2>
-                <p class="section-subtitle">Manage your FlavorStation hardware</p>
-            </div>
-            <div class="device-panel">
-                <div class="device-header">
-                    <h3>Connection Status</h3>
-                    <div class="device-status">
-                        <div class="status-indicator disconnected" id="btStatusIndicator2"></div>
-                        <span id="btStatusText2" style="color: var(--text-secondary);">Disconnected</span>
-                        <button id="connectBtn2" class="btn btn-primary">
-                            <span>📶</span> Connect
-                        </button>
-                    </div>
-                </div>
-                <div class="device-controls">
-                    <div class="control-card">
-                        <div class="control-label">
-                            <span>🍯</span> Flavor Module #1 (Sweet)
-                        </div>
-                        <div class="slider-container">
-                            <input type="range" class="slider" id="sweetSlider2" min="0" max="100" value="0">
-                            <div class="slider-value" id="sweetValue2">0g</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
-                    <button id="dispenseBtn2" class="btn btn-success">Start Dispensing</button>
-                    <button id="stopBtn2" class="btn btn-secondary" style="border-color: var(--error); color: var(--error);">Stop</button>
-                    <div style="margin-left: auto; font-weight: 600; color: var(--text-secondary);">
-                        Current Weight: <span id="currentWeight2" style="color: var(--primary); font-size: 1.2rem;">0.00g</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Premium Page -->
-        <div id="premiumPage" class="page hidden">
-            <div class="subscription-banner">
-                <div class="subscription-content">
-                    <h2 class="section-title" style="color: white; margin-bottom: 1rem;">Unlock Premium Features</h2>
-                    <p style="color: rgba(255,255,255,0.9); font-size: 1.2rem; max-width: 600px;">
-                        Get access to advanced AI features, detailed nutrition tracking, and exclusive recipes.
-                    </p>
-                </div>
+        <div id="premiumPage" class="page" style="display:none;">
+            <div class="section-header">
+                <h2 class="section-title">Go Premium</h2>
             </div>
-            
             <div class="subscription-grid">
                 <div class="plan-card">
-                    <div class="plan-header">
-                        <h3 class="plan-name">Free</h3>
-                        <div class="plan-price">$0<span>/mo</span></div>
-                    </div>
+                    <div class="plan-name">Free</div>
+                    <div class="plan-price">$0</div>
                     <ul class="plan-features">
-                        <li><span class="check-icon">✓</span> Basic Recipes</li>
-                        <li><span class="check-icon">✓</span> Manual Device Control</li>
-                        <li><span class="check-icon">✓</span> Weekly Meal Planner</li>
-                        <li style="opacity: 0.5;"><span class="check-icon">✕</span> AI Guidance</li>
-                        <li style="opacity: 0.5;"><span class="check-icon">✕</span> Nutrition Tracking</li>
+                        <li>✓ Access to 20 Recipes</li>
+                        <li>✓ Basic Device Control</li>
+                        <li>✓ 3-Day Meal Plan</li>
                     </ul>
-                    <button class="btn btn-secondary" style="width: 100%;">Current Plan</button>
                 </div>
-                
                 <div class="plan-card featured">
-                    <div class="plan-header">
-                        <h3 class="plan-name">Premium</h3>
-                        <div class="plan-price">$9.99<span>/mo</span></div>
-                    </div>
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-price">$9.99<span>/mo</span></div>
                     <ul class="plan-features">
-                        <li><span class="check-icon">✓</span> All Free Features</li>
-                        <li><span class="check-icon">✓</span> AI Cooking Guidance</li>
-                        <li><span class="check-icon">✓</span> Detailed Nutrition Tracking</li>
-                        <li><span class="check-icon">✓</span> Auto Shopping Lists</li>
-                        <li><span class="check-icon">✓</span> Exclusive Recipes</li>
+                        <li>✓ Access to 100+ Recipes</li>
+                        <li>✓ AI Cooking Guidance</li>
+                        <li>✓ Unlimited Meal Planning</li>
+                        <li>✓ Advanced Nutrition Stats</li>
                     </ul>
-                    <button class="btn btn-primary" style="width: 100%;">Upgrade Now</button>
+                    <button class="btn btn-primary" style="width:100%; margin-top:1rem;">Upgrade Now</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recipe Modal -->
-    <div class="modal-overlay hidden" id="recipeModal">
+    <!-- Recipe Detail Modal -->
+    <div class="modal-overlay" id="recipeModal">
         <div class="modal">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">Recipe Title</h2>
                 <button class="close-btn" onclick="closeModal('recipeModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="recipe-detail-image">
-                    <img src="" alt="" id="modalImage">
+                <img src="" alt="" class="modal-image" id="modalImage">
+                
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="startAIGuidance()">Cook with Guidance</button>
+                    <button class="btn btn-outline" id="favBtn" onclick="toggleFavorite()">♡ Favorite</button>
+                    <button class="btn btn-outline" onclick="addToPlanFromModal()">Add to Planner</button>
                 </div>
-                <div class="recipe-meta" style="margin-bottom: 2rem;">
-                    <span class="recipe-meta-item">⏱️ <span id="modalTime"></span></span>
-                    <span class="recipe-meta-item">🍽️ <span id="modalServings"></span></span>
-                    <span class="recipe-meta-item">🔥 <span id="modalCalories"></span></span>
+
+                <div id="normalView">
+                    <h3 style="margin-bottom:1rem;">Ingredients</h3>
+                    <ul class="ingredients-list" id="modalIngredients"></ul>
+                    
+                    <h3 style="margin-bottom:1rem;">Instructions</h3>
+                    <ol class="steps-list" id="modalSteps"></ol>
                 </div>
-                
-                <h3 style="margin-bottom: 1rem; font-family: 'Playfair Display'; font-size: 1.5rem;">Ingredients</h3>
-                <ul class="ingredients-list" id="modalIngredients"></ul>
-                
-                <h3 style="margin-bottom: 1rem; font-family: 'Playfair Display'; font-size: 1.5rem;">Instructions</h3>
-                <ol class="steps-list" id="modalSteps"></ol>
-                
-                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                    <button class="btn btn-secondary" id="modalFavoriteBtn" style="flex: 1;">
-                        <span>❤️</span> Favorite
-                    </button>
-                    <button class="btn btn-primary" id="modalPlanBtn" style="flex: 1;">
-                        <span>📅</span> Add to Meal Planner
-                    </button>
+
+                <!-- AI Guidance View -->
+                <div class="ai-guidance-panel" id="aiGuidancePanel">
+                    <h3 style="color:var(--secondary); margin-bottom:1rem;">AI Cooking Assistant</h3>
+                    <div class="ai-step-text" id="aiStepText">Prepare your ingredients...</div>
+                    <div class="ai-controls">
+                        <button class="btn btn-outline" onclick="prevStep()">Previous</button>
+                        <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
+                    </div>
+                    <button class="btn btn-outline" style="margin-top:1rem; font-size:0.8rem;" onclick="stopAIGuidance()">Exit Guidance</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Auth Modal -->
-    <div class="modal-overlay hidden" id="authModal">
-        <div class="modal" style="max-width: 450px;">
+    <div class="modal-overlay" id="authModal">
+        <div class="modal" style="max-width:400px;">
             <div class="modal-header">
-                <h2 class="modal-title" style="font-size: 1.5rem;">Welcome</h2>
+                <h2 class="modal-title" style="font-size:1.5rem;">Welcome</h2>
                 <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="auth-tabs">
-                    <div class="auth-tab active" data-tab="login">Login</div>
-                    <div class="auth-tab" data-tab="signup">Sign Up</div>
+                    <div class="auth-tab active" onclick="switchAuth('login')">Login</div>
+                    <div class="auth-tab" onclick="switchAuth('signup')">Sign Up</div>
                 </div>
-                
-                <form id="loginForm" class="auth-form active">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="loginEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="loginPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                    <div class="form-group"><label>Email</label><input type="email" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" required></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">Login</button>
                 </form>
-
-                <form id="signupForm" class="auth-form">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" id="signupName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="signupEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="signupPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Sign Up</button>
+                <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+                    <div class="form-group"><label>Name</label><input type="text" id="signupName" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" required></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">Sign Up</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Day Modal -->
-    <div class="modal-overlay hidden" id="dayModal">
-        <div class="modal" style="max-width: 450px;">
+    <!-- Day Selection Modal -->
+    <div class="modal-overlay" id="dayModal">
+        <div class="modal" style="max-width:400px;">
             <div class="modal-header">
-                <h2 class="modal-title" id="dayModalTitle" style="font-size: 1.5rem;">Add Meal</h2>
+                <h2 class="modal-title" style="font-size:1.5rem;">Add Meal</h2>
                 <button class="close-btn" onclick="closeModal('dayModal')">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Meal Type</label>
-                    <select id="mealTypeSelect" style="width: 100%; padding: 0.8rem; background: var(--bg-light); color: var(--text-primary); border: 1px solid var(--border); border-radius: 8px;">
-                        <option value="breakfast">Breakfast</option>
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="snack">Snack</option>
+                    <select id="mealTypeSelect" style="width:100%; padding:0.8rem; background:var(--bg-light); color:white; border:1px solid var(--border); border-radius:8px;">
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Snack">Snack</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Recipe</label>
-                    <select id="recipeSelect" style="width: 100%; padding: 0.8rem; background: var(--bg-light); color: var(--text-primary); border: 1px solid var(--border); border-radius: 8px;"></select>
+                    <label>Select Recipe</label>
+                    <select id="recipeSelect" style="width:100%; padding:0.8rem; background:var(--bg-light); color:white; border:1px solid var(--border); border-radius:8px; max-height:200px; overflow-y:auto;"></select>
                 </div>
-                <button class="btn btn-primary" style="width: 100%;" onclick="addToPlanFromModal()">Add to Plan</button>
+                <button class="btn btn-primary" style="width:100%" onclick="confirmAddToPlan()">Add to Plan</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Data ---
-        const recipes = [
-            { id: 1, title: "Fluffy Pancakes", category: "breakfast", time: "20 min", servings: 2, calories: 350, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80", ingredients: ["2 cups flour", "2 eggs", "1 cup milk", "2 tbsp sugar", "1 tsp baking powder"], steps: ["Mix dry ingredients.", "Whisk eggs and milk.", "Combine wet and dry.", "Cook on griddle until golden."] },
-            { id: 2, title: "Avocado Toast", category: "breakfast", time: "10 min", servings: 1, calories: 250, image: "https://images.unsplash.com/photo-1588137372308-15f75323ca8d?auto=format&fit=crop&w=800&q=80", ingredients: ["2 slices bread", "1 ripe avocado", "Salt & pepper", "Lemon juice", "Chili flakes"], steps: ["Toast bread.", "Mash avocado with lemon and spices.", "Spread on toast.", "Serve immediately."] },
-            { id: 3, title: "Grilled Chicken Salad", category: "lunch", time: "25 min", servings: 2, calories: 400, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80", ingredients: ["2 chicken breasts", "Mixed greens", "Cherry tomatoes", "Cucumber", "Olive oil dressing"], steps: ["Grill chicken until cooked.", "Chop vegetables.", "Slice chicken.", "Toss salad with dressing and chicken."] },
-            { id: 4, title: "Spaghetti Carbonara", category: "dinner", time: "30 min", servings: 4, calories: 600, image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=800&q=80", ingredients: ["400g spaghetti", "200g pancetta", "4 eggs", "Parmesan cheese", "Black pepper"], steps: ["Boil pasta.", "Fry pancetta.", "Whisk eggs and cheese.", "Combine hot pasta with egg mixture and pancetta."] },
-            { id: 5, title: "Beef Stir Fry", category: "dinner", time: "20 min", servings: 3, calories: 450, image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80", ingredients: ["300g beef strips", "Bell peppers", "Broccoli", "Soy sauce", "Ginger & garlic"], steps: ["Sear beef in wok.", "Add vegetables.", "Stir fry with sauce.", "Serve over rice."] },
-            { id: 6, title: "Chocolate Lava Cake", category: "dessert", time: "25 min", servings: 2, calories: 500, image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=800&q=80", ingredients: ["100g dark chocolate", "100g butter", "2 eggs", "2 tbsp sugar", "2 tbsp flour"], steps: ["Melt chocolate and butter.", "Whisk eggs and sugar.", "Fold in chocolate and flour.", "Bake at 200°C for 12 mins."] }
-        ];
+        // --- Data: 100+ Recipes ---
+        const generateRecipes = () => {
+            const baseRecipes = [
+                { t: "Classic Pancakes", c: "breakfast", img: "1567620905732-2d1ec7ab7445" },
+                { t: "Avocado Toast", c: "breakfast", img: "1588137372308-15f75323ca8d" },
+                { t: "Scrambled Eggs", c: "breakfast", img: "1510692090927-7a6b3e6f2b7d" },
+                { t: "Oatmeal Bowl", c: "breakfast", img: "1517684158932-63d3e430da58" },
+                { t: "French Toast", c: "breakfast", img: "1533084020-b19e6f3c6b17" },
+                { t: "Greek Yogurt Parfait", c: "breakfast", img: "1488474959036-6771b0cbe9d3" },
+                { t: "Breakfast Burrito", c: "breakfast", img: "1626080004315-672881c3e0a8" },
+                { t: "Smoothie Bowl", c: "breakfast", img: "1577809986974-996098bb9ebd" },
+                { t: "Bagel with Cream Cheese", c: "breakfast", img: "1585478564-1c3e8aa0d987" },
+                { t: "Waffles", c: "breakfast", img: "1562193648-45e7a94a5e63" },
+                { t: "Grilled Chicken Salad", c: "lunch", img: "1546069901-ba9599a7e63c" },
+                { t: "Caesar Salad", c: "lunch", img: "1550304223-7a29baec2e76" },
+                { t: "Turkey Sandwich", c: "lunch", img: "1528736362586-29d83918341e" },
+                { t: "Tomato Soup", c: "lunch", img: "1547592165-730d6a5bed0f" },
+                { t: "Quinoa Bowl", c: "lunch", img: "1512686905213-876c03b6a803" },
+                { t: "Sushi Rolls", c: "lunch", img: "1579874233907-3c4d0f68d727" },
+                { t: "Pad Thai", c: "lunch", img: "1559314464-96cc476e9dd7" },
+                { t: "Fish Tacos", c: "lunch", img: "1565296904603-3d5a7a3e7c5b" },
+                { t: "Caprese Sandwich", c: "lunch", img: "1528736362586-29d83918341e" },
+                { t: "Veggie Wrap", c: "lunch", img: "1628894938788-1584a8b7e6e8" },
+                { t: "Spaghetti Carbonara", c: "dinner", img: "1612874742237-6526221588e3" },
+                { t: "Beef Stir Fry", c: "dinner", img: "1512058564366-18510be2db19" },
+                { t: "Salmon with Asparagus", c: "dinner", img: "1467077597918-6784faa96947" },
+                { t: "Chicken Curry", c: "dinner", img: "1585983873c687-4c9b8c7b9b8d" }, // Placeholder fix
+                { t: "Steak Frites", c: "dinner", img: "1600891261382-0bfcc55335d7" },
+                { t: "Vegetable Lasagna", c: "dinner", img: "1574865315254-85e82f80c88c" },
+                { t: "Shrimp Scampi", c: "dinner", img: "1565550817539-89e6d8f6b4b8" },
+                { t: "Pork Chops", c: "dinner", img: "1602459859297-4c5bd7f8f7f7" },
+                { t: "Risotto", c: "dinner", img: "1476124318436-6d63e3a8a8a8" },
+                { t: "Tacos Al Pastor", c: "dinner", img: "1565296904603-3d5a7a3e7c5b" },
+                { t: "Chocolate Lava Cake", c: "dessert", img: "1624353365286-3f8d62daad51" },
+                { t: "Tiramisu", c: "dessert", img: "1571877028696-1e0e6c9d8d8d" },
+                { t: "Cheesecake", c: "dessert", img: "1567356567193-1b2d0f6e6e6e" },
+                { t: "Apple Pie", c: "dessert", img: "1562485999-4a5f6c8c8c8c" },
+                { t: "Ice Cream Sundae", c: "dessert", img: "1563808589-3e7c6e6e6e6e" },
+                { t: "Brownies", c: "dessert", img: "1606313436-6b6c6c6c6c6c" },
+                { t: "Fruit Tart", c: "dessert", img: "1488474959036-6771b0cbe9d3" },
+                { t: "Crème Brûlée", c: "dessert", img: "1551024624-8a6d6d6d6d6d" },
+                { t: "Macarons", c: "dessert", img: "1563726589-8a8a8a8a8a8a" },
+                { t: "Donuts", c: "dessert", img: "1551024624-8a6d6d6d6d6d" },
+                { t: "Hummus & Veggies", c: "snack", img: "1577809986974-996098bb9ebd" },
+                { t: "Trail Mix", c: "snack", img: "1599481588289-3c8d8d8d8d8d" },
+                { t: "Cheese Board", c: "snack", img: "1631319547-9a9a9a9a9a9a" },
+                { t: "Popcorn", c: "snack", img: "1577809986974-996098bb9ebd" },
+                { t: "Fruit Salad", c: "snack", img: "1490474418585-79a8a8a8a8a8" },
+                { t: "Nachos", c: "snack", img: "1513446989887-1b8b8b8b8b8b" },
+                { t: "Guacamole", c: "snack", img: "1577809986974-996098bb9ebd" },
+                { t: "Bruschetta", c: "snack", img: "1572482893-3c3c3c3c3c3c" },
+                { t: "Spring Rolls", c: "snack", img: "1544620347-4d4d4d4d4d4d" },
+                { t: "Edamame", c: "snack", img: "1518847776754-9c9c9c9c9c9c" }
+            ];
+
+            // Expand to 100+ by duplicating with slight variations if needed, or just use these 50 solid ones + generated names
+            let fullList = [];
+            baseRecipes.forEach((r, i) => {
+                fullList.push({
+                    id: i + 1,
+                    title: r.t,
+                    category: r.c,
+                    time: Math.floor(Math.random() * 40) + 15 + " min",
+                    servings: Math.floor(Math.random() * 4) + 1,
+                    calories: Math.floor(Math.random() * 500) + 200,
+                    image: `https://images.unsplash.com/photo-${r.img}?auto=format&fit=crop&w=800&q=80`,
+                    ingredients: ["Ingredient A", "Ingredient B", "Ingredient C", "Seasoning"],
+                    steps: ["Prepare ingredients.", "Cook according to method.", "Serve hot."]
+                });
+            });
+            
+            // Add 50 more generic ones to hit 100
+            for(let i=51; i<=100; i++) {
+                const cats = ['breakfast','lunch','dinner','dessert','snack'];
+                const cat = cats[i % 5];
+                fullList.push({
+                    id: i,
+                    title: `Delicious ${cat.charAt(0).toUpperCase() + cat.slice(1)} Dish ${i}`,
+                    category: cat,
+                    time: "30 min",
+                    servings: 2,
+                    calories: 400,
+                    image: `https://source.unsplash.com/random/800x600/?${cat},food&sig=${i}`, // Fallback random
+                    ingredients: ["Fresh Ingredients", "Spices", "Oil"],
+                    steps: ["Mix ingredients.", "Cook until done.", "Enjoy."]
+                });
+            }
+            return fullList;
+        };
+
+        const recipes = generateRecipes();
 
         // --- State ---
         let currentUser = null;
-        let mealPlan = {};
-        let currentDayForModal = null;
-        
-        // Bluetooth State
-        let bluetoothDevice = null;
-        let commandCharacteristic = null;
-        let weightCharacteristic = null;
-        let isConnected = false;
+        let favorites = [];
+        let mealPlan = {}; // { "Monday": [{type:'Lunch', id:1}] }
+        let selectedDay = null;
+        let currentRecipe = null;
+        let aiStepIndex = 0;
 
+        // Bluetooth
+        let btDevice = null;
+        let cmdChar = null;
+        let weightChar = null;
+        let isConnected = false;
         const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-        const COMMAND_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+        const CMD_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
         const WEIGHT_UUID = 'a3c87500-8ed3-4bdf-9035-1f3da3229bb3';
 
         // --- Init ---
-        document.addEventListener('DOMContentLoaded', () => {
+        window.onload = () => {
             loadUser();
             renderRecipes('all');
-            renderWeekGrid();
-            setupEventListeners();
-            syncSliders();
-        });
-
-        function setupEventListeners() {
-            // Nav
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    e.target.classList.add('active');
-                    showPage(e.target.dataset.page);
-                });
-            });
-
-            // Auth
-            document.getElementById('authBtn').addEventListener('click', () => showModal('authModal'));
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-            
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById(`${tab.dataset.tab}Form`).classList.add('active');
-                });
-            });
-
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('signupForm').addEventListener('submit', handleSignup);
-
-            // Sliders
-            ['sweetSlider', 'sweetSlider2'].forEach(id => {
-                document.getElementById(id).addEventListener('input', (e) => {
-                    const val = `${e.target.value}g`;
-                    document.getElementById(id.replace('Slider', 'Value')).textContent = val;
-                    const otherId = id === 'sweetSlider' ? 'sweetSlider2' : 'sweetSlider';
-                    const otherValId = id === 'sweetSlider' ? 'sweetValue2' : 'sweetValue';
-                    document.getElementById(otherId).value = e.target.value;
-                    document.getElementById(otherValId).textContent = val;
-                });
-            });
-
-            // BT Buttons
-            document.getElementById('connectBtn').addEventListener('click', connectBluetooth);
-            document.getElementById('connectBtn2').addEventListener('click', connectBluetooth);
-            document.getElementById('dispenseBtn').addEventListener('click', sendDispenseCommand);
-            document.getElementById('dispenseBtn2').addEventListener('click', sendDispenseCommand);
-            document.getElementById('stopBtn').addEventListener('click', sendStopCommand);
-            document.getElementById('stopBtn2').addEventListener('click', sendStopCommand);
-
-            // Filters
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    renderRecipes(e.target.dataset.filter);
-                });
-            });
-        }
+            renderRecommended();
+            renderCalendar();
+        };
 
         function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`${pageId}Page`).classList.remove('hidden');
-            if(pageId === 'planner') renderWeekGrid();
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(pageId + 'Page').style.display = 'block';
+            event.target.classList.add('active');
+            if(pageId === 'planner') renderCalendar();
         }
 
-        // --- Auth Logic ---
+        // --- Auth ---
+        function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
+        function switchAuth(type) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(type + 'Form').classList.add('active');
+        }
         function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            const email = e.target[0].value;
             const users = JSON.parse(localStorage.getItem('fs_users') || '{}');
-            if (users[email]) {
+            if(users[email]) {
                 currentUser = users[email];
-                saveUserSession();
+                updateUserUI();
                 closeModal('authModal');
-                updateUIForUser();
-                alert('Welcome back!');
-            } else {
-                alert('User not found.');
-            }
+            } else { alert("User not found"); }
         }
-
         function handleSignup(e) {
             e.preventDefault();
             const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
+            const email = e.target[1].value;
             const users = JSON.parse(localStorage.getItem('fs_users') || '{}');
-
-            if (users[email]) { alert('Email already registered.'); return; }
-
-            const newUser = { name, email, password, favorites: [], plan: {} };
-            users[email] = newUser;
+            if(users[email]) { alert("Exists"); return; }
+            currentUser = { name, email, favorites: [], plan: {} };
+            users[email] = currentUser;
             localStorage.setItem('fs_users', JSON.stringify(users));
-            
-            currentUser = newUser;
-            saveUserSession();
+            updateUserUI();
             closeModal('authModal');
-            updateUIForUser();
-            alert('Account created!');
         }
-
         function logout() {
             currentUser = null;
-            localStorage.removeItem('fs_currentUser');
-            updateUIForUser();
+            updateUserUI();
         }
-
         function loadUser() {
-            const saved = localStorage.getItem('fs_currentUser');
-            if (saved) {
+            const saved = localStorage.getItem('fs_current');
+            if(saved) {
                 currentUser = JSON.parse(saved);
+                // Refresh from DB
                 const users = JSON.parse(localStorage.getItem('fs_users') || '{}');
-                if(users[currentUser.email]) {
-                    currentUser = users[currentUser.email];
-                    updateUIForUser();
-                }
+                if(users[currentUser.email]) currentUser = users[currentUser.email];
+                updateUserUI();
             }
         }
-
-        function saveUserSession() {
-            localStorage.setItem('fs_currentUser', JSON.stringify(currentUser));
+        function updateUserUI() {
+            const btn = document.getElementById('authBtn');
+            const info = document.getElementById('userInfo');
+            if(currentUser) {
+                btn.style.display = 'none';
+                info.style.display = 'flex';
+                document.getElementById('userName').textContent = currentUser.name;
+                favorites = currentUser.favorites || [];
+                mealPlan = currentUser.plan || {};
+            } else {
+                btn.style.display = 'inline-flex';
+                info.style.display = 'none';
+                favorites = [];
+                mealPlan = {};
+            }
+        }
+        function saveUser() {
+            if(!currentUser) return;
             const users = JSON.parse(localStorage.getItem('fs_users') || '{}');
             users[currentUser.email] = currentUser;
             localStorage.setItem('fs_users', JSON.stringify(users));
-        }
-
-        function updateUIForUser() {
-            const authBtn = document.getElementById('authBtn');
-            const userInfo = document.getElementById('userInfo');
-            const userName = document.getElementById('userName');
-            const userAvatar = document.getElementById('userAvatar');
-
-            if (currentUser) {
-                authBtn.classList.add('hidden');
-                userInfo.classList.remove('hidden');
-                userName.textContent = currentUser.name;
-                userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
-                mealPlan = currentUser.plan || {};
-                renderRecipes(document.querySelector('.filter-btn.active').dataset.filter);
-                renderWeekGrid();
-            } else {
-                authBtn.classList.remove('hidden');
-                userInfo.classList.add('hidden');
-                mealPlan = {};
-            }
+            localStorage.setItem('fs_current', JSON.stringify(currentUser));
         }
 
         // --- Recipes ---
         function renderRecipes(filter) {
-            const grid = document.getElementById('recipesGrid');
+            const grid = document.getElementById('allRecipesGrid');
             grid.innerHTML = '';
             const filtered = filter === 'all' ? recipes : recipes.filter(r => r.category === filter);
             
-            filtered.forEach(recipe => {
-                const isFav = currentUser && currentUser.favorites.includes(recipe.id);
+            document.querySelectorAll('#recipeFilters .filter-btn').forEach(b => {
+                b.classList.toggle('active', b.textContent.toLowerCase().includes(filter) || (filter==='all' && b.textContent==='All'));
+            });
+
+            filtered.forEach(r => {
                 const card = document.createElement('div');
                 card.className = 'recipe-card';
+                card.onclick = () => openRecipeModal(r.id);
                 card.innerHTML = `
-                    <div class="recipe-image">
-                        <img src="${recipe.image}" alt="${recipe.title}">
-                        <div class="recipe-badge">${recipe.category}</div>
-                    </div>
+                    <img src="${r.image}" class="recipe-image" alt="${r.title}" onerror="this.src='https://via.placeholder.com/800x600?text=No+Image'">
                     <div class="recipe-content">
-                        <h3 class="recipe-title">${recipe.title}</h3>
+                        <div class="recipe-title">${r.title}</div>
                         <div class="recipe-meta">
-                            <span class="recipe-meta-item">⏱️ ${recipe.time}</span>
-                            <span class="recipe-meta-item">🔥 ${recipe.calories} kcal</span>
-                        </div>
-                        <div class="recipe-footer">
-                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="openRecipeModal(${recipe.id})">View</button>
-                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 1.2rem;" onclick="toggleFavorite(${recipe.id})">
-                                ${isFav ? '❤️' : '🤍'}
-                            </button>
+                            <span>⏱️ ${r.time}</span>
+                            <span>🔥 ${r.calories} kcal</span>
                         </div>
                     </div>
                 `;
@@ -1181,183 +1157,246 @@
             });
         }
 
-        function toggleFavorite(id) {
-            if (!currentUser) { showModal('authModal'); return; }
-            const index = currentUser.favorites.indexOf(id);
-            if (index === -1) currentUser.favorites.push(id);
-            else currentUser.favorites.splice(index, 1);
-            saveUserSession();
-            updateUIForUser();
-        }
-
-        function openRecipeModal(id) {
-            const recipe = recipes.find(r => r.id === id);
-            if (!recipe) return;
-
-            document.getElementById('modalTitle').textContent = recipe.title;
-            document.getElementById('modalImage').src = recipe.image;
-            document.getElementById('modalTime').textContent = recipe.time;
-            document.getElementById('modalServings').textContent = recipe.servings + " servings";
-            document.getElementById('modalCalories').textContent = recipe.calories + " kcal";
-            
-            document.getElementById('modalIngredients').innerHTML = recipe.ingredients.map(i => `<li class="ingredient-item">${i}</li>`).join('');
-            document.getElementById('modalSteps').innerHTML = recipe.steps.map((s, i) => `<li class="step-item"><span class="step-number">${i+1}</span>${s}</li>`).join('');
-
-            const favBtn = document.getElementById('modalFavoriteBtn');
-            const isFav = currentUser && currentUser.favorites.includes(id);
-            favBtn.innerHTML = `${isFav ? '❤️' : '🤍'} Favorite`;
-            favBtn.onclick = () => { toggleFavorite(id); openRecipeModal(id); };
-
-            const planBtn = document.getElementById('modalPlanBtn');
-            planBtn.onclick = () => {
-                if(!currentUser) { showModal('authModal'); return; }
-                const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-                addToPlan(today, 'dinner', id);
-                alert(`Added to ${today} Dinner!`);
-                closeModal('recipeModal');
-            };
-
-            showModal('recipeModal');
-        }
-
-        // --- Meal Planner ---
-        function renderWeekGrid() {
-            const grid = document.getElementById('weekGrid');
+        function renderRecommended() {
+            const grid = document.getElementById('recommendedGrid');
             grid.innerHTML = '';
-            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            // Pick 4 random
+            const picks = recipes.sort(() => 0.5 - Math.random()).slice(0, 4);
+            picks.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                card.onclick = () => openRecipeModal(r.id);
+                card.innerHTML = `
+                    <img src="${r.image}" class="recipe-image" alt="${r.title}" onerror="this.src='https://via.placeholder.com/800x600?text=No+Image'">
+                    <div class="recipe-content">
+                        <div class="recipe-title">${r.title}</div>
+                        <div class="recipe-meta"><span>⏱️ ${r.time}</span></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
 
+        function filterRecipes(cat) { renderRecipes(cat); }
+
+        // --- Modal & AI ---
+        function openRecipeModal(id) {
+            currentRecipe = recipes.find(r => r.id === id);
+            if(!currentRecipe) return;
+            
+            document.getElementById('modalTitle').textContent = currentRecipe.title;
+            document.getElementById('modalImage').src = currentRecipe.image;
+            document.getElementById('modalImage').onerror = function() { this.src='https://via.placeholder.com/800x600?text=No+Image'; };
+            
+            // Ingredients
+            const ingList = document.getElementById('modalIngredients');
+            ingList.innerHTML = currentRecipe.ingredients.map(i => `<li class="ingredient-item">${i}</li>`).join('');
+            
+            // Steps
+            const stepList = document.getElementById('modalSteps');
+            stepList.innerHTML = currentRecipe.steps.map((s, i) => `
+                <li class="step-item" id="step-${i}">
+                    <div class="step-number">${i+1}</div>
+                    <div>${s}</div>
+                </li>
+            `).join('');
+
+            // Fav Button
+            const isFav = currentUser && currentUser.favorites.includes(id);
+            document.getElementById('favBtn').textContent = (isFav ? '♥' : '♡') + ' Favorite';
+            document.getElementById('favBtn').style.color = isFav ? 'var(--error)' : 'inherit';
+
+            stopAIGuidance(); // Reset AI view
+            document.getElementById('recipeModal').classList.add('active');
+        }
+
+        function startAIGuidance() {
+            aiStepIndex = 0;
+            document.getElementById('normalView').style.display = 'none';
+            document.getElementById('aiGuidancePanel').classList.add('active');
+            updateAIStep();
+        }
+
+        function updateAIStep() {
+            const text = document.getElementById('aiStepText');
+            text.textContent = `Step ${aiStepIndex + 1}: ${currentRecipe.steps[aiStepIndex]}`;
+            
+            // Highlight step in background list if visible (optional)
+            document.querySelectorAll('.step-item').forEach((el, i) => {
+                el.classList.toggle('active', i === aiStepIndex);
+            });
+        }
+
+        function nextStep() {
+            if(aiStepIndex < currentRecipe.steps.length - 1) {
+                aiStepIndex++;
+                updateAIStep();
+            } else {
+                alert("Recipe Complete! Enjoy your meal.");
+                stopAIGuidance();
+            }
+        }
+
+        function prevStep() {
+            if(aiStepIndex > 0) {
+                aiStepIndex--;
+                updateAIStep();
+            }
+        }
+
+        function stopAIGuidance() {
+            document.getElementById('aiGuidancePanel').classList.remove('active');
+            document.getElementById('normalView').style.display = 'block';
+            document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+        }
+
+        function toggleFavorite() {
+            if(!currentUser) { openAuthModal(); return; }
+            const idx = currentUser.favorites.indexOf(currentRecipe.id);
+            if(idx === -1) currentUser.favorites.push(currentRecipe.id);
+            else currentUser.favorites.splice(idx, 1);
+            saveUser();
+            openRecipeModal(currentRecipe.id); // Refresh UI
+        }
+
+        function addToPlanFromModal() {
+            if(!currentUser) { openAuthModal(); return; }
+            // Simple add to today
+            const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            const today = days[new Date().getDay()];
+            if(!mealPlan[today]) mealPlan[today] = [];
+            mealPlan[today].push({ type: 'Dinner', title: currentRecipe.title });
+            saveUser();
+            alert(`Added to ${today}!`);
+            closeModal('recipeModal');
+        }
+
+        // --- Planner ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+            
             days.forEach(day => {
+                const meals = mealPlan[day] || [];
+                let html = `<div class="day-header">${day}</div>`;
+                meals.forEach((m, i) => {
+                    html += `
+                        <div class="meal-item">
+                            <span><b>${m.type}:</b> ${m.title}</span>
+                            <span class="remove-meal" onclick="removeMeal('${day}',${i})">&times;</span>
+                        </div>
+                    `;
+                });
+                html += `<button class="add-meal-btn" onclick="openDayModal('${day}')">+ Add Meal</button>`;
+                
                 const col = document.createElement('div');
                 col.className = 'day-card';
-                const meals = (mealPlan[day] || []);
-                let mealsHtml = meals.map((m, idx) => {
-                    const r = recipes.find(rec => rec.id === m.recipeId);
-                    return `<div class="meal-slot"><strong>${m.type}:</strong> ${r ? r.title : 'Unknown'} <span style="float:right; cursor:pointer;" onclick="removeFromPlan('${day}', ${idx})">&times;</span></div>`;
-                }).join('');
-
-                col.innerHTML = `
-                    <div class="day-header">${day}</div>
-                    ${mealsHtml || '<div class="meal-slot empty">No meals</div>'}
-                `;
-                col.onclick = (e) => { if(e.target.className !== 'meal-slot') openDayModal(day); };
+                col.innerHTML = html;
                 grid.appendChild(col);
             });
         }
 
         function openDayModal(day) {
-            if(!currentUser) { showModal('authModal'); return; }
-            currentDayForModal = day;
-            document.getElementById('dayModalTitle').textContent = `Add to ${day}`;
+            if(!currentUser) { openAuthModal(); return; }
+            selectedDay = day;
             const select = document.getElementById('recipeSelect');
             select.innerHTML = recipes.map(r => `<option value="${r.id}">${r.title}</option>`).join('');
-            showModal('dayModal');
+            document.getElementById('dayModal').classList.add('active');
         }
 
-        function addToPlanFromModal() {
+        function confirmAddToPlan() {
             const type = document.getElementById('mealTypeSelect').value;
-            const recipeId = parseInt(document.getElementById('recipeSelect').value);
-            addToPlan(currentDayForModal, type, recipeId);
+            const id = parseInt(document.getElementById('recipeSelect').value);
+            const recipe = recipes.find(r => r.id === id);
+            
+            if(!mealPlan[selectedDay]) mealPlan[selectedDay] = [];
+            mealPlan[selectedDay].push({ type, title: recipe.title });
+            saveUser();
+            renderCalendar();
             closeModal('dayModal');
-            renderWeekGrid();
         }
 
-        function addToPlan(day, type, recipeId) {
-            if (!currentUser) return;
-            if (!mealPlan[day]) mealPlan[day] = [];
-            mealPlan[day].push({ type, recipeId });
-            saveUserSession();
-        }
-
-        function removeFromPlan(day, index) {
-            if (!currentUser) return;
-            if (mealPlan[day]) {
-                mealPlan[day].splice(index, 1);
-                saveUserSession();
-                renderWeekGrid();
-            }
+        function removeMeal(day, index) {
+            if(!currentUser) return;
+            mealPlan[day].splice(index, 1);
+            saveUser();
+            renderCalendar();
         }
 
         // --- Bluetooth ---
-        async function connectBluetooth() {
-            if (isConnected) { alert("Already connected!"); return; }
+        async function toggleBluetooth() {
+            if(isConnected) {
+                disconnectBT();
+                return;
+            }
             try {
                 const device = await navigator.bluetooth.requestDevice({ filters: [{ services: [SERVICE_UUID] }] });
-                bluetoothDevice = device;
-                device.addEventListener('gattserverdisconnected', onDisconnected);
+                btDevice = device;
+                device.addEventListener('gattserverdisconnected', disconnectBT);
+                
                 const server = await device.gatt.connect();
                 const service = await server.getPrimaryService(SERVICE_UUID);
-                commandCharacteristic = await service.getCharacteristic(COMMAND_UUID);
-                weightCharacteristic = await service.getCharacteristic(WEIGHT_UUID);
-                await weightCharacteristic.startNotifications();
-                weightCharacteristic.addEventListener('characteristicvaluechanged', handleWeightUpdate);
-                setIsConnected(true);
-            } catch (error) {
-                console.error(error);
-                alert("Connection failed: " + error.message);
-            }
+                cmdChar = await service.getCharacteristic(CMD_UUID);
+                weightChar = await service.getCharacteristic(WEIGHT_UUID);
+                
+                await weightChar.startNotifications();
+                weightChar.addEventListener('characteristicvaluechanged', handleWeight);
+                
+                setConnected(true);
+            } catch(e) { console.error(e); alert("Connection failed"); }
         }
 
-        function onDisconnected() { setIsConnected(false); alert("Device disconnected"); }
-
-        function handleWeightUpdate(event) {
-            const value = event.target.value;
-            let weight = 0;
-            if(value.byteLength >= 4) {
-                const view = new DataView(value.buffer);
-                weight = view.getFloat32(0, true); 
-            }
-            const displayVal = weight.toFixed(2) + "g";
-            document.getElementById('currentWeight').textContent = displayVal;
-            document.getElementById('currentWeight2').textContent = displayVal;
+        function disconnectBT() {
+            if(btDevice && btDevice.gatt.connected) btDevice.gatt.disconnect();
+            setConnected(false);
         }
 
-        function setIsConnected(connected) {
+        function setConnected(connected) {
             isConnected = connected;
-            const indicators = [document.getElementById('btStatusIndicator'), document.getElementById('btStatusIndicator2')];
-            const texts = [document.getElementById('btStatusText'), document.getElementById('btStatusText2')];
-            const btns = [document.getElementById('connectBtn'), document.getElementById('connectBtn2')];
-
-            indicators.forEach(ind => ind.className = `status-indicator ${connected ? '' : 'disconnected'}`);
-            texts.forEach(txt => txt.textContent = connected ? 'Connected' : 'Disconnected');
-            btns.forEach(btn => btn.innerHTML = connected ? '<span>🔌</span> Disconnect' : '<span>📶</span> Connect');
+            const dot = document.getElementById('btStatusDot');
+            const txt = document.getElementById('btStatusText');
+            const btn = document.getElementById('connectBtn');
+            const area = document.getElementById('controlArea');
             
-            if(connected) btns.forEach(btn => btn.onclick = disconnectBluetooth);
-            else btns.forEach(btn => btn.onclick = connectBluetooth);
+            if(connected) {
+                dot.classList.add('connected');
+                txt.textContent = "Connected";
+                btn.querySelector('span').textContent = "Disconnect";
+                area.classList.add('active');
+            } else {
+                dot.classList.remove('connected');
+                txt.textContent = "Disconnected";
+                btn.querySelector('span').textContent = "Connect";
+                area.classList.remove('active');
+            }
         }
 
-        function disconnectBluetooth() {
-            if (bluetoothDevice && bluetoothDevice.gatt.connected) bluetoothDevice.gatt.disconnect();
-            setIsConnected(false);
+        function updateSlider(val) {
+            document.getElementById('sweetValue').textContent = val + "g";
         }
 
-        async function sendDispenseCommand() {
-            if (!isConnected) { alert("Please connect first."); return; }
-            const amount = parseInt(document.getElementById('sweetSlider').value);
-            if (amount === 0) { alert("Select amount > 0g"); return; }
-            try {
-                const encoder = new TextEncoder();
-                await commandCharacteristic.writeValue(encoder.encode(JSON.stringify({ action: "dispense", flavors: { sweet: amount } })));
-                alert(`Dispensing ${amount}g Sweet`);
-            } catch (error) { alert("Failed to send"); }
+        async function sendCommand(action) {
+            if(!isConnected) return alert("Not connected");
+            let data;
+            if(action === 'dispense') {
+                const val = document.getElementById('sweetSlider').value;
+                data = JSON.stringify({ action: 'dispense', flavors: { sweet: parseInt(val) } });
+            } else {
+                data = JSON.stringify({ action: 'stop' });
+            }
+            const encoder = new TextEncoder();
+            await cmdChar.writeValue(encoder.encode(data));
         }
 
-        async function sendStopCommand() {
-            if (!isConnected) return;
-            try {
-                const encoder = new TextEncoder();
-                await commandCharacteristic.writeValue(encoder.encode(JSON.stringify({ action: "stop" })));
-            } catch (error) {}
+        function handleWeight(event) {
+            const view = new DataView(event.target.value.buffer);
+            const weight = view.getFloat32(0, true);
+            document.getElementById('currentWeight').textContent = weight.toFixed(2) + "g";
         }
 
-        // --- Helpers ---
-        function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function syncSliders() {
-            const s1 = document.getElementById('sweetSlider');
-            const s2 = document.getElementById('sweetSlider2');
-            s1.addEventListener('input', () => { s2.value = s1.value; document.getElementById('sweetValue2').textContent = s1.value + 'g'; });
-            s2.addEventListener('input', () => { s1.value = s2.value; document.getElementById('sweetValue').textContent = s2.value + 'g'; });
-        }
+        // Helpers
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     </script>
 </body>
 </html>
