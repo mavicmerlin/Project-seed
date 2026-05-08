@@ -1483,25 +1483,25 @@
                     <div className="nav-container">
                         <div className="logo">Flavor Station</div>
                         <div className="nav-menu">
-                            <a 
+                            <a
                                 className={`nav-link ${currentPage === 'home' ? 'active' : ''}`}
                                 onClick={() => setCurrentPage('home')}
                             >
                                 Home
                             </a>
-                            <a 
+                            <a
                                 className={`nav-link ${currentPage === 'recipes' ? 'active' : ''}`}
                                 onClick={() => setCurrentPage('recipes')}
                             >
                                 Recipes
                             </a>
-                            <a 
+                            <a
                                 className={`nav-link ${currentPage === 'planner' ? 'active' : ''}`}
                                 onClick={() => setCurrentPage('planner')}
                             >
                                 Meal Planner
                             </a>
-                            <a 
+                            <a
                                 className={`nav-link ${currentPage === 'subscription' ? 'active' : ''}`}
                                 onClick={() => setCurrentPage('subscription')}
                             >
@@ -1510,7 +1510,7 @@
                         </div>
                         <div className="user-menu">
                             {user ? (
-                                <div 
+                                <div
                                     className="user-avatar"
                                     onClick={() => setCurrentPage('profile')}
                                 >
@@ -1550,24 +1550,24 @@
             // Calculate dynamic calories based on flavor adjustments
             const calculateCalories = () => {
                 if (!selectedRecipe) return 0;
-                
+
                 let baseCalories = selectedRecipe.baseCalories;
-                
+
                 // Each flavor level represents grams of that ingredient added
                 // Sweet (sugar): 4 calories per gram (only flavor module available)
                 const sweetGrams = flavorLevels.sweet;
                 const sweetCalories = sweetGrams * 4;
-                
+
                 const totalAddedCalories = sweetCalories;
                 const adjustedCalories = baseCalories + totalAddedCalories;
-                
+
                 return Math.round(adjustedCalories);
             };
 
             // Get recommended amounts based on recipe type
             const getRecommendedLevels = () => {
                 if (!selectedRecipe) return { sweet: 20 };
-                
+
                 // Different cuisines have different sweet flavor profiles
                 if (selectedRecipe.category === 'Thai') {
                     return { sweet: 50 };
@@ -1621,7 +1621,7 @@
                     alert('Please enter an IP address');
                     return;
                 }
-                
+
                 const wifiDevice = {
                     id: 'wifi-' + wifiIP,
                     name: `Flavor Station (${wifiIP})`,
@@ -1639,7 +1639,7 @@
 
             const startDispensing = async () => {
                 setIsDispensing(true);
-                
+
                 // Prepare command data - only sweet flavor for single module
                 const commandData = {
                     action: 'dispense',
@@ -1680,14 +1680,14 @@
                     window.flavorStationBLE = null;
                     console.log('Bluetooth disconnected');
                 }
-                
+
                 // Disconnect WiFi
                 if (window.flavorStationWS) {
                     window.flavorStationWS.close();
                     window.flavorStationWS = null;
                     console.log('WiFi disconnected');
                 }
-                
+
                 setIsConnected(false);
                 alert('Disconnected from device');
             };
@@ -1696,7 +1696,7 @@
             const scanForDevices = async (type) => {
                 setIsScanning(true);
                 setConnectionType(type);
-                
+
                 if (type === 'bluetooth') {
                     try {
                         // Check if Web Bluetooth is supported
@@ -1729,7 +1729,7 @@
                             type: 'bluetooth',
                             bluetoothDevice: device
                         };
-                        
+
                         setAvailableDevices([btDevice]);
                         setIsScanning(false);
 
@@ -1748,7 +1748,7 @@
 
             const connectToDevice = async (device) => {
                 setSelectedDevice(device);
-                
+
                 try {
                     if (device.type === 'bluetooth') {
                         // Connect via Bluetooth
@@ -1799,7 +1799,7 @@
                                     <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
                                 </div>
                             </div>
-                            <button 
+                            <button
                                 className={`btn ${isConnected ? 'btn-secondary' : 'btn-primary'}`}
                                 onClick={() => {
                                     if (isConnected) {
@@ -1824,9 +1824,9 @@
                                         border: '1px solid var(--accent)',
                                         borderRadius: '16px'
                                     }}>
-                                        <div style={{ 
-                                            display: 'flex', 
-                                            justifyContent: 'space-between', 
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
                                             alignItems: 'center',
                                             marginBottom: '1rem'
                                         }}>
@@ -1834,7 +1834,7 @@
                                                 <i className="fas fa-star" style={{ color: 'var(--accent)', marginRight: '0.5rem' }}></i>
                                                 Saved Presets
                                             </h3>
-                                            <button 
+                                            <button
                                                 className="btn btn-primary"
                                                 style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                                                 onClick={() => setShowPresetModal(true)}
@@ -1898,10 +1898,10 @@
                                             Flavor Module #1 (Sweet)
                                         </div>
                                         <div className="slider-container">
-                                            <input 
-                                                type="range" 
-                                                min="0" 
-                                                max="100" 
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
                                                 value={flavorLevels.sweet}
                                                 onChange={(e) => updateFlavor('sweet', e.target.value)}
                                                 className="slider"
@@ -1914,7 +1914,7 @@
 
                                 {selectedRecipe && (
                                     <>
-                                        <div style={{ 
+                                        <div style={{
                                             marginTop: '2rem',
                                             padding: '1rem',
                                             background: 'rgba(42, 157, 143, 0.1)',
@@ -1925,7 +1925,7 @@
                                             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
                                                 <i className="fas fa-lightbulb"></i> Recommended for {selectedRecipe.category}
                                             </div>
-                                            <button 
+                                            <button
                                                 className="btn btn-secondary"
                                                 onClick={applyRecommended}
                                                 style={{ fontSize: '0.9rem', padding: '0.5rem 1.5rem' }}
@@ -1934,10 +1934,10 @@
                                             </button>
                                         </div>
 
-                                        <div style={{ 
-                                            marginTop: '1.5rem', 
-                                            padding: '1.5rem', 
-                                            background: 'var(--bg-light)', 
+                                        <div style={{
+                                            marginTop: '1.5rem',
+                                            padding: '1.5rem',
+                                            background: 'var(--bg-light)',
                                             borderRadius: '16px',
                                             display: 'grid',
                                             gridTemplateColumns: '1fr 1fr',
@@ -1950,7 +1950,7 @@
                                                 <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'var(--primary)' }}>
                                                     {calculateCalories()} <span style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>kcal</span>
                                                 </div>
-                                                <div style={{ 
+                                                <div style={{
                                                     color: calculateCalories() > selectedRecipe.baseCalories ? 'var(--warning)' : 'var(--success)',
                                                     fontSize: '0.9rem',
                                                     fontWeight: '600',
@@ -1977,7 +1977,7 @@
                                 )}
 
                                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                                    <button 
+                                    <button
                                         className="btn btn-success"
                                         onClick={startDispensing}
                                         disabled={isDispensing}
@@ -2032,7 +2032,7 @@
                                         />
                                     </div>
 
-                                    <div style={{ 
+                                    <div style={{
                                         padding: '1rem',
                                         background: 'var(--bg-light)',
                                         borderRadius: '12px',
@@ -2045,14 +2045,14 @@
                                     </div>
 
                                     <div style={{ display: 'flex', gap: '1rem' }}>
-                                        <button 
+                                        <button
                                             className="btn btn-secondary"
                                             onClick={() => setShowPresetModal(false)}
                                             style={{ flex: 1 }}
                                         >
                                             Cancel
                                         </button>
-                                        <button 
+                                        <button
                                             className="btn btn-primary"
                                             onClick={savePreset}
                                             style={{ flex: 1 }}
@@ -2078,8 +2078,8 @@
                                     </button>
                                 </div>
                                 <div className="modal-body">
-                                    <div style={{ 
-                                        padding: '1rem', 
+                                    <div style={{
+                                        padding: '1rem',
                                         background: 'rgba(42, 157, 143, 0.1)',
                                         border: '1px solid var(--secondary)',
                                         borderRadius: '8px',
@@ -2115,9 +2115,9 @@
                                                 textAlign: 'center'
                                             }}
                                         />
-                                        <div style={{ 
-                                            marginTop: '0.5rem', 
-                                            fontSize: '0.85rem', 
+                                        <div style={{
+                                            marginTop: '0.5rem',
+                                            fontSize: '0.85rem',
                                             color: 'var(--text-secondary)',
                                             textAlign: 'center'
                                         }}>
@@ -2126,14 +2126,14 @@
                                     </div>
 
                                     <div style={{ display: 'flex', gap: '1rem' }}>
-                                        <button 
+                                        <button
                                             className="btn btn-secondary"
                                             onClick={() => setShowWifiInput(false)}
                                             style={{ flex: 1 }}
                                         >
                                             Cancel
                                         </button>
-                                        <button 
+                                        <button
                                             className="btn btn-primary"
                                             onClick={confirmWifiIP}
                                             style={{ flex: 1 }}
@@ -2142,7 +2142,7 @@
                                         </button>
                                     </div>
 
-                                    <div style={{ 
+                                    <div style={{
                                         marginTop: '1.5rem',
                                         padding: '1rem',
                                         background: 'var(--bg-light)',
@@ -2174,8 +2174,8 @@
                                 </div>
                                 <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
                                     <div style={{ marginBottom: '2rem' }}>
-                                        <h3 style={{ 
-                                            color: 'var(--primary)', 
+                                        <h3 style={{
+                                            color: 'var(--primary)',
                                             marginBottom: '1rem',
                                             display: 'flex',
                                             alignItems: 'center',
@@ -2184,9 +2184,9 @@
                                             <i className="fas fa-bluetooth"></i>
                                             Bluetooth Connection
                                         </h3>
-                                        <div style={{ 
-                                            padding: '1.5rem', 
-                                            background: 'var(--bg-light)', 
+                                        <div style={{
+                                            padding: '1.5rem',
+                                            background: 'var(--bg-light)',
                                             borderRadius: '12px',
                                             marginBottom: '1rem'
                                         }}>
@@ -2199,8 +2199,8 @@
                                                 <li>Click "Pair" to establish connection</li>
                                             </ol>
                                         </div>
-                                        <div style={{ 
-                                            padding: '1rem', 
+                                        <div style={{
+                                            padding: '1rem',
                                             background: 'rgba(6, 214, 160, 0.1)',
                                             border: '1px solid var(--success)',
                                             borderRadius: '8px',
@@ -2210,36 +2210,36 @@
                                         </div>
                                     </div>
 
-                                    <div style={{ 
-                                        padding: '1.5rem', 
-                                        background: 'var(--bg-medium)', 
+                                    <div style={{
+                                        padding: '1.5rem',
+                                        background: 'var(--bg-medium)',
                                         border: '1px solid var(--border)',
-                                        borderRadius: '12px' 
+                                        borderRadius: '12px'
                                     }}>
                                         <h4 style={{ marginBottom: '1rem' }}>
                                             <i className="fas fa-code"></i> ESP32 Code Requirements
                                         </h4>
                                         <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.8' }}>
                                             <p style={{ marginBottom: '0.5rem' }}>
-                                                <strong>Bluetooth Service UUID:</strong> <code style={{ 
-                                                    background: 'var(--bg-dark)', 
-                                                    padding: '0.25rem 0.5rem', 
+                                                <strong>Bluetooth Service UUID:</strong> <code style={{
+                                                    background: 'var(--bg-dark)',
+                                                    padding: '0.25rem 0.5rem',
                                                     borderRadius: '4px',
                                                     fontSize: '0.85rem'
                                                 }}>4fafc201-1fb5-459e-8fcc-c5c9c331914b</code>
                                             </p>
                                             <p style={{ marginBottom: '0.5rem' }}>
-                                                <strong>Bluetooth Characteristic UUID:</strong> <code style={{ 
-                                                    background: 'var(--bg-dark)', 
-                                                    padding: '0.25rem 0.5rem', 
+                                                <strong>Bluetooth Characteristic UUID:</strong> <code style={{
+                                                    background: 'var(--bg-dark)',
+                                                    padding: '0.25rem 0.5rem',
                                                     borderRadius: '4px',
                                                     fontSize: '0.85rem'
                                                 }}>beb5483e-36e1-4688-b7f5-ea07361b26a8</code>
                                             </p>
                                             <p style={{ marginBottom: '0.5rem' }}>
-                                                <strong>WiFi WebSocket Port:</strong> <code style={{ 
-                                                    background: 'var(--bg-dark)', 
-                                                    padding: '0.25rem 0.5rem', 
+                                                <strong>WiFi WebSocket Port:</strong> <code style={{
+                                                    background: 'var(--bg-dark)',
+                                                    padding: '0.25rem 0.5rem',
                                                     borderRadius: '4px',
                                                     fontSize: '0.85rem'
                                                 }}>81</code>
@@ -2250,7 +2250,7 @@
                                         </div>
                                     </div>
 
-                                    <div style={{ 
+                                    <div style={{
                                         marginTop: '1.5rem',
                                         padding: '1rem',
                                         background: 'rgba(232, 93, 4, 0.1)',
@@ -2279,7 +2279,7 @@
                                 <div className="modal-header">
                                     <h2 className="modal-title">Connect to Device</h2>
                                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                        <button 
+                                        <button
                                             onClick={() => setShowSetupGuide(true)}
                                             style={{
                                                 background: 'none',
@@ -2312,8 +2312,8 @@
                                         <div style={{ textAlign: 'center' }}>
                                             <h3 style={{ marginBottom: '2rem' }}>Choose Connection Method</h3>
                                             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', maxWidth: '400px', margin: '0 auto' }}>
-                                                <button 
-                                                    className="btn btn-primary" 
+                                                <button
+                                                    className="btn btn-primary"
                                                     onClick={() => scanForDevices('bluetooth')}
                                                     style={{ padding: '2rem', flexDirection: 'column', gap: '1rem' }}
                                                 >
@@ -2331,16 +2331,16 @@
                                         </div>
                                     ) : (
                                         <div>
-                                            <div style={{ 
-                                                display: 'flex', 
-                                                alignItems: 'center', 
-                                                gap: '1rem', 
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '1rem',
                                                 marginBottom: '2rem',
                                                 padding: '1rem',
                                                 background: 'var(--bg-light)',
                                                 borderRadius: '12px'
                                             }}>
-                                                <i className="fas fa-bluetooth" 
+                                                <i className="fas fa-bluetooth"
                                                    style={{ fontSize: '1.5rem', color: 'var(--primary)' }}></i>
                                                 <div>
                                                     <div style={{ fontWeight: '600' }}>
@@ -2350,18 +2350,18 @@
                                                         {availableDevices.length} devices found
                                                     </div>
                                                 </div>
-                                                <button 
-                                                    className="btn btn-secondary" 
+                                                <button
+                                                    className="btn btn-secondary"
                                                     style={{ marginLeft: 'auto', padding: '0.5rem 1rem' }}
                                                     onClick={() => scanForDevices(connectionType)}
                                                 >
                                                     <i className="fas fa-redo"></i> Rescan
                                                 </button>
                                             </div>
-                                            
+
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                                 {availableDevices.map(device => (
-                                                    <div 
+                                                    <div
                                                         key={device.id}
                                                         style={{
                                                             padding: '1.5rem',
@@ -2377,7 +2377,7 @@
                                                         onClick={() => connectToDevice(device)}
                                                     >
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                            <i className="fas fa-blender" 
+                                                            <i className="fas fa-blender"
                                                                style={{ fontSize: '1.5rem', color: 'var(--primary)' }}></i>
                                                             <div>
                                                                 <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>
@@ -2413,7 +2413,7 @@
 
             return (
                 <div className="recipe-card" onClick={() => !locked && onClick(recipe)}>
-                    <div className="recipe-image" style={{ 
+                    <div className="recipe-image" style={{
                         backgroundImage: `url(${recipe.image})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
@@ -2423,7 +2423,7 @@
                                 <i className="fas fa-crown"></i> Premium
                             </div>
                         )}
-                        <button 
+                        <button
                             className="favorite-btn"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -2494,7 +2494,7 @@
         // Recipe Detail Modal
         function RecipeModal({ recipe, onClose, user }) {
             if (!recipe) return null;
-            
+
             const isFavorite = user?.favorites?.includes(recipe.id);
 
             return (
@@ -2512,10 +2512,10 @@
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center'
                             }}></div>
-                            
-                            <div style={{ 
-                                display: 'grid', 
-                                gridTemplateColumns: 'repeat(4, 1fr)', 
+
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(4, 1fr)',
                                 gap: '1rem',
                                 marginBottom: '2rem'
                             }}>
@@ -2544,7 +2544,7 @@
                                     <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Rating</div>
                                 </div>
                             </div>
-                            
+
                             <div style={{ marginBottom: '2rem' }}>
                                 <h3 style={{ marginBottom: '1rem' }}>Ingredients</h3>
                                 <ul className="ingredients-list">
@@ -2570,9 +2570,9 @@
                             </div>
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                                <button 
-                                    className="btn" 
-                                    style={{ 
+                                <button
+                                    className="btn"
+                                    style={{
                                         background: isFavorite ? '#EF476F' : 'var(--bg-light)',
                                         color: isFavorite ? 'white' : 'var(--text-primary)',
                                         border: '1px solid var(--border)'
@@ -2585,7 +2585,7 @@
                                     <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
                                     {isFavorite ? ' Favorited' : ' Favorite'}
                                 </button>
-                                <button 
+                                <button
                                     className="btn btn-primary"
                                     onClick={() => {
                                         // Add to meal planner logic
@@ -2597,7 +2597,7 @@
                                     Add to Meal Planner
                                 </button>
                             </div>
-                            
+
                             <button className="btn btn-primary" style={{ width: '100%' }}>
                                 <i className="fas fa-play"></i>
                                 Start Cooking with Guidance
@@ -2650,8 +2650,8 @@
                         </div>
                     </div>
 
-                    <DeviceControl 
-                        isConnected={isConnected} 
+                    <DeviceControl
+                        isConnected={isConnected}
                         setIsConnected={setIsConnected}
                         selectedRecipe={selectedRecipe}
                         user={user}
@@ -2664,9 +2664,9 @@
 
                     <div className="recipe-grid">
                         {MOCK_RECIPES.slice(0, 3).map(recipe => (
-                            <RecipeCard 
-                                key={recipe.id} 
-                                recipe={recipe} 
+                            <RecipeCard
+                                key={recipe.id}
+                                recipe={recipe}
                                 onClick={setSelectedRecipe}
                                 user={user}
                             />
@@ -2678,13 +2678,13 @@
                             <h2 className="section-title">Premium Features</h2>
                             <p className="section-subtitle">Exclusive tools for premium members</p>
                         </div>
-                        
-                        <div style={{ 
-                            display: 'grid', 
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-                            gap: '1.5rem' 
+
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                            gap: '1.5rem'
                         }}>
-                            <div className="control-card" style={{ padding: '2rem' }}>
+                            <div className="control-card" style={{ padding: '2rem', opacity: 0.6 }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
                                     🎯
                                 </div>
@@ -2694,9 +2694,12 @@
                                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                                     Set daily calorie and macro targets. Track your progress automatically.
                                 </p>
+                                <button className="btn btn-primary" style={{ marginTop: '1rem', width: '100%' }}>
+                                    <i className="fas fa-lock"></i> Premium Only
+                                </button>
                             </div>
 
-                            <div className="control-card" style={{ padding: '2rem' }}>
+                            <div className="control-card" style={{ padding: '2rem', opacity: 0.6 }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
                                     🗣️
                                 </div>
@@ -2706,9 +2709,12 @@
                                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                                     Hands-free cooking with step-by-step voice instructions.
                                 </p>
+                                <button className="btn btn-primary" style={{ marginTop: '1rem', width: '100%' }}>
+                                    <i className="fas fa-lock"></i> Premium Only
+                                </button>
                             </div>
 
-                            <div className="control-card" style={{ padding: '2rem' }}>
+                            <div className="control-card" style={{ padding: '2rem', opacity: 0.6 }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
                                     🔄
                                 </div>
@@ -2718,9 +2724,12 @@
                                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                                     AI suggests ingredient swaps based on what you have.
                                 </p>
+                                <button className="btn btn-primary" style={{ marginTop: '1rem', width: '100%' }}>
+                                    <i className="fas fa-lock"></i> Premium Only
+                                </button>
                             </div>
 
-                            <div className="control-card" style={{ padding: '2rem' }}>
+                            <div className="control-card" style={{ padding: '2rem', opacity: 0.6 }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
                                     📊
                                 </div>
@@ -2730,9 +2739,12 @@
                                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                                     Track your cooking habits and improve over time.
                                 </p>
+                                <button className="btn btn-primary" style={{ marginTop: '1rem', width: '100%' }}>
+                                    <i className="fas fa-lock"></i> Premium Only
+                                </button>
                             </div>
 
-                            <div className="control-card" style={{ padding: '2rem' }}>
+                            <div className="control-card" style={{ padding: '2rem', opacity: 0.6 }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
                                     👨‍🍳
                                 </div>
@@ -2742,9 +2754,12 @@
                                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                                     Pro techniques and tricks for every recipe.
                                 </p>
+                                <button className="btn btn-primary" style={{ marginTop: '1rem', width: '100%' }}>
+                                    <i className="fas fa-lock"></i> Premium Only
+                                </button>
                             </div>
 
-                            <div className="control-card" style={{ padding: '2rem' }}>
+                            <div className="control-card" style={{ padding: '2rem', opacity: 0.6 }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
                                     💾
                                 </div>
@@ -2759,8 +2774,8 @@
                     </div>
 
                     {selectedRecipe && (
-                        <RecipeModal 
-                            recipe={selectedRecipe} 
+                        <RecipeModal
+                            recipe={selectedRecipe}
                             onClose={() => setSelectedRecipe(null)}
                             user={user}
                         />
@@ -2775,8 +2790,8 @@
             const [selectedCategory, setSelectedCategory] = useState('All');
             const categories = ['All', 'Thai', 'Western', 'Healthy', 'Quick Meals', 'Indian', 'Vietnamese', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Middle Eastern'];
 
-            const filteredRecipes = selectedCategory === 'All' 
-                ? MOCK_RECIPES 
+            const filteredRecipes = selectedCategory === 'All'
+                ? MOCK_RECIPES
                 : MOCK_RECIPES.filter(r => r.category === selectedCategory);
 
             return (
@@ -2800,9 +2815,9 @@
 
                     <div className="recipe-grid">
                         {filteredRecipes.map(recipe => (
-                            <RecipeCard 
-                                key={recipe.id} 
-                                recipe={recipe} 
+                            <RecipeCard
+                                key={recipe.id}
+                                recipe={recipe}
                                 onClick={setSelectedRecipe}
                                 user={user}
                             />
@@ -2810,8 +2825,8 @@
                     </div>
 
                     {selectedRecipe && (
-                        <RecipeModal 
-                            recipe={selectedRecipe} 
+                        <RecipeModal
+                            recipe={selectedRecipe}
                             onClose={() => setSelectedRecipe(null)}
                             user={user}
                         />
@@ -2929,8 +2944,8 @@
                                     Priority customer support
                                 </li>
                             </ul>
-                            <button 
-                                className="btn btn-primary" 
+                            <button
+                                className="btn btn-primary"
                                 style={{ width: '100%' }}
                                 onClick={upgradeToPremium}
                                 disabled={user?.isPremium}
@@ -2998,7 +3013,7 @@
                         </div>
                         <h2 className="profile-name">{user.name}</h2>
                         <p className="profile-email">{user.email}</p>
-                        
+
                         <div className="stat-grid">
                             <div className="stat-item">
                                 <div className="stat-value">47</div>
@@ -3032,8 +3047,8 @@
                                 <div className="toggle-item">
                                     <span>Spicy Food</span>
                                     <label className="toggle-switch">
-                                        <input 
-                                            type="checkbox" 
+                                        <input
+                                            type="checkbox"
                                             checked={preferences.spicyFood}
                                             onChange={() => togglePreference('spicyFood')}
                                         />
@@ -3043,8 +3058,8 @@
                                 <div className="toggle-item">
                                     <span>Vegetarian</span>
                                     <label className="toggle-switch">
-                                        <input 
-                                            type="checkbox" 
+                                        <input
+                                            type="checkbox"
                                             checked={preferences.vegetarian}
                                             onChange={() => togglePreference('vegetarian')}
                                         />
@@ -3054,8 +3069,8 @@
                                 <div className="toggle-item">
                                     <span>Low Sodium</span>
                                     <label className="toggle-switch">
-                                        <input 
-                                            type="checkbox" 
+                                        <input
+                                            type="checkbox"
                                             checked={preferences.lowSodium}
                                             onChange={() => togglePreference('lowSodium')}
                                         />
@@ -3065,8 +3080,8 @@
                                 <div className="toggle-item">
                                     <span>High Protein</span>
                                     <label className="toggle-switch">
-                                        <input 
-                                            type="checkbox" 
+                                        <input
+                                            type="checkbox"
                                             checked={preferences.highProtein}
                                             onChange={() => togglePreference('highProtein')}
                                         />
@@ -3101,7 +3116,7 @@
         // Meal Planner Page
         function MealPlannerPage({ user }) {
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-            
+
             const [meals, setMeals] = useState({
                 Monday: [
                     { id: 1, recipeId: 1, mealType: 'Lunch' },
@@ -3163,7 +3178,7 @@
 
             const autoGeneratePlan = () => {
                 setIsGenerating(true);
-                
+
                 // Simulate AI generation
                 setTimeout(() => {
                     const newPlan = {};
@@ -3188,7 +3203,7 @@
 
             const generateShoppingList = () => {
                 const allIngredients = [];
-                
+
                 Object.values(meals).flat().forEach(meal => {
                     const recipe = getRecipeById(meal.recipeId);
                     if (recipe) {
@@ -3231,9 +3246,9 @@
                         <p className="section-subtitle">Plan your meals for the week ahead</p>
                     </div>
 
-                    <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: 'repeat(3, 1fr)', 
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
                         gap: '1rem',
                         marginBottom: '2rem',
                         padding: '1.5rem',
@@ -3262,8 +3277,8 @@
                     </div>
 
                     <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem' }}>
-                        <button 
-                            className="btn btn-primary" 
+                        <button
+                            className="btn btn-primary"
                             onClick={autoGeneratePlan}
                             disabled={isGenerating}
                         >
@@ -3279,14 +3294,14 @@
                                 </>
                             )}
                         </button>
-                        <button 
+                        <button
                             className="btn btn-secondary"
                             onClick={() => setShowShoppingList(true)}
                         >
                             <i className="fas fa-shopping-cart"></i>
                             View Shopping List ({generateShoppingList().length})
                         </button>
-                        <button 
+                        <button
                             className="btn btn-secondary"
                             onClick={() => setMeals(days.reduce((acc, day) => ({ ...acc, [day]: [] }), {}))}
                         >
@@ -3333,7 +3348,7 @@
                                         </div>
                                     ) : null;
                                 })}
-                                <div 
+                                <div
                                     className="meal-slot empty"
                                     onClick={() => {
                                         setSelectedDay(day);
@@ -3361,7 +3376,7 @@
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
                                             Meal Type
                                         </label>
-                                        <select 
+                                        <select
                                             id="mealType"
                                             style={{
                                                 width: '100%',
@@ -3379,16 +3394,16 @@
                                             <option value="Snack">Snack</option>
                                         </select>
                                     </div>
-                                    
+
                                     <div style={{ marginBottom: '1rem' }}>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
                                             Select Recipe
                                         </label>
                                     </div>
 
-                                    <div style={{ 
-                                        display: 'grid', 
-                                        gridTemplateColumns: 'repeat(2, 1fr)', 
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(2, 1fr)',
                                         gap: '1rem',
                                         maxHeight: '400px',
                                         overflowY: 'auto'
@@ -3470,7 +3485,7 @@
                                     ) : (
                                         <div>
                                             {generateShoppingList().map((ingredient, i) => (
-                                                <div 
+                                                <div
                                                     key={i}
                                                     style={{
                                                         padding: '1rem',
@@ -3493,8 +3508,8 @@
                                                             For: {ingredient.recipes.join(', ')}
                                                         </div>
                                                     </div>
-                                                    <input 
-                                                        type="checkbox" 
+                                                    <input
+                                                        type="checkbox"
                                                         style={{ width: '20px', height: '20px', cursor: 'pointer' }}
                                                     />
                                                 </div>
@@ -3512,26 +3527,26 @@
         // Main App Component
         function App() {
             const [currentPage, setCurrentPage] = useState('home');
-            const [user, setUser] = useState({ 
-                name: 'Sarah Chen', 
+            const [user, setUser] = useState({
+                name: 'Sarah Chen',
                 email: 'sarah@example.com',
-                isPremium: false 
+                isPremium: false
             });
             const [showLogin, setShowLogin] = useState(false);
             const [isConnected, setIsConnected] = useState(false);
 
             return (
                 <>
-                    <Navigation 
-                        currentPage={currentPage} 
+                    <Navigation
+                        currentPage={currentPage}
                         setCurrentPage={setCurrentPage}
                         user={user}
                         setShowLogin={setShowLogin}
                     />
                     <div className="container">
                         {currentPage === 'home' && (
-                            <HomePage 
-                                user={user} 
+                            <HomePage
+                                user={user}
                                 setCurrentPage={setCurrentPage}
                                 isConnected={isConnected}
                                 setIsConnected={setIsConnected}
