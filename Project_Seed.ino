@@ -2,7 +2,7 @@
 #include <U8g2lib.h>
 #include <Wire.h>
 #include "HX711.h"
-#include <RotaryEncoder.h>
+#include <RotaryEncoder.h> 
 #include <AccelStepper.h>
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -13,14 +13,14 @@
 // ==========================================
 // 📌 PIN DEFINITIONS
 // ==========================================
-#define LOADCELL_DOUT_PIN 4
-#define LOADCELL_SCK_PIN 5
-#define ENCODER_SW 6
+#define LOADCELL_DOUT_PIN 4 
+#define LOADCELL_SCK_PIN 5 
+#define ENCODER_SW 6  
 #define ENCODER_CLK 12
 #define ENCODER_DT 13
-#define OLED1_PWR 7
+#define OLED1_PWR 7 
 #define OLED1_SDA 8
-#define OLED1_SCL 9
+#define OLED1_SCL 9 
 #define OLED2_SDA 10
 #define OLED2_SCL 11
 #define IN1 15
@@ -72,11 +72,11 @@ class MyCommandCallbacks : public BLECharacteristicCallbacks {
       if (value.length() > 0) {
         Serial.print("Received command: ");
         Serial.println(value.c_str());
-
+        
         // Parse JSON command
         StaticJsonDocument<256> doc;
         DeserializationError error = deserializeJson(doc, value.c_str());
-
+        
         if (!error) {
           const char* action = doc["action"];
           if (action && strcmp(action, "dispense") == 0) {
@@ -88,16 +88,16 @@ class MyCommandCallbacks : public BLECharacteristicCallbacks {
               totalFlavor += doc["flavors"]["sweet"] | 0;
               totalFlavor += doc["flavors"]["umami"] | 0;
             }
-
+            
             // Map flavor total (0-400) to weight (0-40g)
             int targetWeight = (int)(totalFlavor / 10.0);
             if (targetWeight < 1) targetWeight = 10; // Default
-
+            
             webTargetWhole = targetWeight;
             webTargetDecimal = 0;
             webDispenseRequested = true;
             commandReceived = true;
-
+            
             Serial.print("Parsed dispense command - Target: ");
             Serial.print(targetWeight);
             Serial.println("g");
@@ -126,7 +126,7 @@ AccelStepper stepper(AccelStepper::FULL4WIRE, IN1, IN3, IN2, IN4);
 // ==========================================
 // ⚙️ GLOBAL SYSTEM VARIABLES
 // ==========================================
-float calibration_factor = 2280.0;
+float calibration_factor = 2280.0; 
 float currentWeight = 0.0;
 bool isOunces = false;
 
@@ -139,16 +139,16 @@ float getTargetWeight() { return targetWhole + (targetDecimal * 0.1); }
 // 🧠 STATE MACHINES
 // ==========================================
 enum ActiveScreen { SCREEN_1_SETTINGS, SCREEN_2_DISPENSE };
-ActiveScreen activeScreen = SCREEN_2_DISPENSE;
+ActiveScreen activeScreen = SCREEN_2_DISPENSE; 
 
 enum S1_State { S1_MENU, S1_ZEROING, S1_ZERO_SUCCESS, S1_CALIBRATING };
 S1_State s1State = S1_MENU;
-int s1MenuIndex = 0;
+int s1MenuIndex = 0; 
 
 enum S2_State { S2_HOVER, S2_EDIT_WHOLE, S2_EDIT_DEC, S2_CONFIRM, S2_DISPENSING, S2_RETRACTING, S2_DONE };
 S2_State s2State = S2_HOVER;
-int s2HoverIndex = 0;
-int s2ConfirmIndex = 0;
+int s2HoverIndex = 0; 
+int s2ConfirmIndex = 0; 
 
 // ==========================================
 // ⚡ BUTTON TIMING & INTERRUPTS
@@ -157,7 +157,7 @@ long oldEncoderPos = 0;
 unsigned long buttonPressTime = 0;
 bool buttonHeldTriggered = false;
 bool isButtonPressed = false;
-unsigned long stateTimer = 0;
+unsigned long stateTimer = 0; 
 
 void IRAM_ATTR checkPosition() { encoder.tick(); }
 
@@ -166,36 +166,36 @@ void IRAM_ATTR checkPosition() { encoder.tick(); }
 // ==========================================
 void setup() {
   Serial.begin(115200);
-
+  
   // Initialize Bluetooth
   BLEDevice::init("FlavorStation-S3");
-
+  
   // Create the BLE Server
   pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
-
+  
   // Create the BLE Service
   BLEService *pService = pServer->createService(serviceUUID);
-
+  
   // Create Command Characteristic (for receiving commands from web app)
   pCommandCharacteristic = pService->createCharacteristic(
                       charCommandUUID,
-                      BLECharacteristic::PROPERTY_WRITE |
+                      BLECharacteristic::PROPERTY_WRITE | 
                       BLECharacteristic::PROPERTY_WRITE_NR
                     );
   pCommandCharacteristic->setCallbacks(new MyCommandCallbacks());
-
+  
   // Create Weight Characteristic (for sending weight to web app)
   pWeightCharacteristic = pService->createCharacteristic(
                       charWeightUUID,
-                      BLECharacteristic::PROPERTY_READ |
+                      BLECharacteristic::PROPERTY_READ | 
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   pWeightCharacteristic->addDescriptor(new BLE2902());
-
+  
   // Start the service
   pService->start();
-
+  
   // Start advertising
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(serviceUUID);
@@ -203,7 +203,7 @@ void setup() {
   pAdvertising->setMinPreferred(0x06);
   pAdvertising->setMinPreferred(0x12);
   BLEDevice::startAdvertising();
-
+  
   Serial.println("Bluetooth ready. Waiting for connection...");
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_CLK), checkPosition, CHANGE);
@@ -215,9 +215,9 @@ void setup() {
 
   // Power cycle Screen 1
   pinMode(OLED1_PWR, OUTPUT);
-  digitalWrite(OLED1_PWR, LOW);
-  delay(200);
-  digitalWrite(OLED1_PWR, HIGH);
+  digitalWrite(OLED1_PWR, LOW); 
+  delay(200); 
+  digitalWrite(OLED1_PWR, HIGH); 
   delay(100);
 
   // Map HARDWARE I2C entirely to Screen 2
@@ -231,10 +231,10 @@ void setup() {
 
   screen1.clearBuffer(); screen1.setFont(u8g2_font_ncenB08_tr); screen1.drawStr(5, 20, "Booting Scale..."); screen1.sendBuffer();
   screen2.clearBuffer(); screen2.setFont(u8g2_font_ncenB10_tr); screen2.drawStr(10, 35, "System Starting..."); screen2.sendBuffer();
-
+  
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-  scale.set_scale(calibration_factor);
-  scale.tare(15);
+  scale.set_scale(calibration_factor); 
+  scale.tare(15); 
 }
 
 // ==========================================
@@ -250,7 +250,7 @@ void loop() {
     }
     oldDeviceConnected = deviceConnected;
   }
-
+  
   // Send weight update via BLE if connected (throttled to avoid flooding)
   static unsigned long lastWeightUpdate = 0;
   if (deviceConnected && pWeightCharacteristic && millis() - lastWeightUpdate > 500) {
@@ -265,7 +265,7 @@ void loop() {
   handleButton();
   handleEncoder();
   readScale();
-
+  
   // Check for web dispense command and update target if needed
   if (webDispenseRequested && s2State == S2_HOVER) {
     targetWhole = webTargetWhole;
@@ -274,20 +274,20 @@ void loop() {
     webDispenseRequested = false;
     Serial.println("Web command: Starting dispensing immediately");
   }
-
+  
   runMotorLogic();
 
   // 2. SLOW TASKS: Cap the screen refresh rate to fix the motor CPU choke!
   static unsigned long lastScreenUpdate = 0;
-
+  
   // Add the RETRACTING state to the speed limits so it doesn't choke the CPU
-  int refreshRate = (s2State == S2_DISPENSING || s2State == S2_RETRACTING) ? 500 : 100;
+  int refreshRate = (s2State == S2_DISPENSING || s2State == S2_RETRACTING) ? 500 : 100; 
 
   if (millis() - lastScreenUpdate > refreshRate) {
-
+    
     // Pause Screen 1 during BOTH dispensing and retracting
     if (s2State != S2_DISPENSING && s2State != S2_RETRACTING) {
-      drawScreen1();
+      drawScreen1(); 
     }
     drawScreen2();
     lastScreenUpdate = millis();
@@ -299,21 +299,21 @@ void loop() {
 // ==========================================
 void handleButton() {
   bool currentButtonState = (digitalRead(ENCODER_SW) == LOW);
-
+  
   if (currentButtonState && !isButtonPressed) {
     isButtonPressed = true;
     buttonPressTime = millis();
     buttonHeldTriggered = false;
-  }
+  } 
   else if (currentButtonState && isButtonPressed) {
     // LONG PRESS (2 Seconds) -> Switch Screens ONLY
     if (millis() - buttonPressTime > 2000 && !buttonHeldTriggered) {
       buttonHeldTriggered = true;
       activeScreen = (activeScreen == SCREEN_1_SETTINGS) ? SCREEN_2_DISPENSE : SCREEN_1_SETTINGS;
-      s1State = S1_MENU;
-      if(s2State != S2_DISPENSING) s2State = S2_HOVER;
+      s1State = S1_MENU; 
+      if(s2State != S2_DISPENSING) s2State = S2_HOVER; 
     }
-  }
+  } 
   else if (!currentButtonState && isButtonPressed) {
     isButtonPressed = false;
     // SHORT CLICK -> Enter Menus / Edit Modes / Confirm
@@ -326,20 +326,20 @@ void handleButton() {
 void executeShortClick() {
   if (activeScreen == SCREEN_1_SETTINGS) {
     if (s1State == S1_MENU) {
-      if (s1MenuIndex == 0) {
+      if (s1MenuIndex == 0) { 
         s1State = S1_ZEROING; drawScreen1(); scale.tare(10); s1State = S1_ZERO_SUCCESS; stateTimer = millis();
-      } else if (s1MenuIndex == 1) { s1State = S1_CALIBRATING; }
+      } else if (s1MenuIndex == 1) { s1State = S1_CALIBRATING; } 
       else if (s1MenuIndex == 2) { isOunces = !isOunces; }
     } else if (s1State == S1_CALIBRATING) {
-      s1State = S1_MENU;
+      s1State = S1_MENU; 
     }
-  }
+  } 
   else if (activeScreen == SCREEN_2_DISPENSE) {
     if (s2State == S2_HOVER) {
       if (s2HoverIndex == 0) s2State = S2_EDIT_WHOLE;
       else if (s2HoverIndex == 1) s2State = S2_EDIT_DEC;
-      else if (s2HoverIndex == 2) s2State = S2_CONFIRM;
-    }
+      else if (s2HoverIndex == 2) s2State = S2_CONFIRM; 
+    } 
     else if (s2State == S2_EDIT_WHOLE || s2State == S2_EDIT_DEC) {
       s2State = S2_HOVER; // Save and go back to hover
     }
@@ -347,7 +347,7 @@ void executeShortClick() {
       if (s2ConfirmIndex == 1) {
         s2State = S2_DISPENSING;
       }
-      else s2State = S2_HOVER;
+      else s2State = S2_HOVER; 
     }
   }
 }
@@ -355,7 +355,7 @@ void executeShortClick() {
 void handleEncoder() {
   long newPos = encoder.getPosition();
   if (newPos != oldEncoderPos) {
-    int dir = (int)encoder.getDirection();
+    int dir = (int)encoder.getDirection(); 
     oldEncoderPos = newPos;
 
     if (activeScreen == SCREEN_1_SETTINGS) {
@@ -367,7 +367,7 @@ void handleEncoder() {
         calibration_factor += (dir * 10.0);
         scale.set_scale(calibration_factor);
       }
-    }
+    } 
     else if (activeScreen == SCREEN_2_DISPENSE) {
       if (s2State == S2_HOVER) {
         s2HoverIndex += dir;
@@ -395,7 +395,7 @@ void handleEncoder() {
 // ==========================================
 void readScale() {
   if (scale.is_ready()) {
-    float rawWeight = scale.get_units(1);
+    float rawWeight = scale.get_units(1); 
     if (rawWeight > -0.3 && rawWeight < 0.3) rawWeight = 0.0;
     currentWeight = isOunces ? (rawWeight * 0.035274) : rawWeight;
   }
@@ -404,17 +404,17 @@ void readScale() {
 void runMotorLogic() {
   if (s2State == S2_DISPENSING) {
     if (currentWeight < getTargetWeight()) {
-      stepper.setSpeed(500);
+      stepper.setSpeed(500); 
       stepper.runSpeed();
     } else {
       // 🔄 Target reached! Move to retraction instead of finishing.
-      s2State = S2_RETRACTING;
+      s2State = S2_RETRACTING; 
       stateTimer = millis();   // Start the timer for the reverse motion
     }
-  }
+  } 
   else if (s2State == S2_RETRACTING) {
     // ⏱️ Run backward for 800 milliseconds (0.8 seconds)
-    if (millis() - stateTimer < 800) {
+    if (millis() - stateTimer < 800) { 
       stepper.setSpeed(-500); // Negative speed spins the motor backward!
       stepper.runSpeed();
     } else {
@@ -438,15 +438,15 @@ void drawScreen1() {
   if (s1State == S1_MENU) {
     if (s1MenuIndex == 0) screen1.drawStr(10, 12, "> 1. Zero Scale"); else screen1.drawStr(10, 12, "  1. Zero Scale");
     if (s1MenuIndex == 1) screen1.drawStr(10, 22, "> 2. Calibrate"); else screen1.drawStr(10, 22, "  2. Calibrate");
-
+    
     char unitStr[20]; sprintf(unitStr, "  3. Units: %s", isOunces ? "oz" : "g");
-    if (s1MenuIndex == 2) unitStr[0] = '>';
+    if (s1MenuIndex == 2) unitStr[0] = '>'; 
     screen1.drawStr(10, 32, unitStr);
-  }
+  } 
   else if (s1State == S1_ZEROING) screen1.drawStr(20, 22, "ZEROING...");
   else if (s1State == S1_ZERO_SUCCESS) {
     screen1.drawStr(10, 20, "[ SUCCESS ]");
-    if (millis() - stateTimer > 1500) s1State = S1_MENU;
+    if (millis() - stateTimer > 1500) s1State = S1_MENU; 
   }
   else if (s1State == S1_CALIBRATING) {
     screen1.setCursor(10, 15); screen1.print("Factor: "); screen1.print(calibration_factor, 0);
@@ -465,7 +465,7 @@ void drawScreen2() {
 
     char wholeStr[5], decStr[5];
     sprintf(wholeStr, "%02d", targetWhole);
-    sprintf(decStr, ".%d", targetDecimal);
+    sprintf(decStr, ".%d", targetDecimal); 
 
     // 1. Draw the Target Numbers
     screen2.setFont(u8g2_font_ncenB14_tr);
@@ -473,27 +473,27 @@ void drawScreen2() {
     screen2.drawStr(92, 22, decStr);
 
     // 2. Draw the Unit (g or oz) right next to the numbers
-    screen2.setFont(u8g2_font_ncenB10_tr);
-    screen2.drawStr(114, 22, isOunces ? "oz" : "g");
+    screen2.setFont(u8g2_font_ncenB10_tr); 
+    screen2.drawStr(114, 22, isOunces ? "oz" : "g"); 
 
     // 3. EDIT UI: Solid box around the number being edited
     if (s2State == S2_EDIT_WHOLE) screen2.drawFrame(68, 5, 25, 22);
     if (s2State == S2_EDIT_DEC) screen2.drawFrame(93, 5, 18, 22);
-
+    
     // HOVER UI: Lines under the numbers
     if (s2State == S2_HOVER) {
-      if (s2HoverIndex == 0) screen2.drawLine(70, 24, 90, 24);
-      if (s2HoverIndex == 1) screen2.drawLine(95, 24, 110, 24);
+      if (s2HoverIndex == 0) screen2.drawLine(70, 24, 90, 24); 
+      if (s2HoverIndex == 1) screen2.drawLine(95, 24, 110, 24); 
     }
 
     screen2.setFont(u8g2_font_ncenB10_tr);
     if (s2HoverIndex == 2 && s2State == S2_HOVER) {
       screen2.drawBox(14, 40, 100, 18);
-      screen2.setDrawColor(0); screen2.drawStr(22, 54, "DISPENSE"); screen2.setDrawColor(1);
+      screen2.setDrawColor(0); screen2.drawStr(22, 54, "DISPENSE"); screen2.setDrawColor(1); 
     } else {
       screen2.drawFrame(14, 40, 100, 18); screen2.drawStr(22, 54, "DISPENSE");
     }
-  }
+  } 
   else if (s2State == S2_CONFIRM) {
     screen2.setFont(u8g2_font_ncenB08_tr); screen2.setCursor(15, 20);
     screen2.print("Dispense "); screen2.print(getTargetWeight(), 1); screen2.print(" ?");
@@ -501,7 +501,7 @@ void drawScreen2() {
     else screen2.drawStr(30, 45, "  NO    > YES");
   }
   else if (s2State == S2_DISPENSING || s2State == S2_RETRACTING) {
-    screen2.setFont(u8g2_font_ncenB10_tr);
+    screen2.setFont(u8g2_font_ncenB10_tr); 
     if (s2State == S2_DISPENSING) screen2.drawStr(15, 20, "DISPENSING...");
     else screen2.drawStr(15, 20, "RETRACTING..."); // Show reverse status
     screen2.setFont(u8g2_font_ncenB18_tr); screen2.setCursor(20, 50); screen2.print(currentWeight, 1);
@@ -509,7 +509,7 @@ void drawScreen2() {
   }
   else if (s2State == S2_DONE) {
     screen2.setFont(u8g2_font_ncenB14_tr); screen2.drawStr(15, 35, "FINISHED!");
-    if (millis() - stateTimer > 2500) s2State = S2_HOVER;
+    if (millis() - stateTimer > 2500) s2State = S2_HOVER; 
   }
   screen2.sendBuffer();
 }
