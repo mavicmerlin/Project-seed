@@ -1537,7 +1537,7 @@
             });
             const [isDispensing, setIsDispensing] = useState(false);
             const [showConnectionModal, setShowConnectionModal] = useState(false);
-            const [connectionType, setConnectionType] = useState(null);
+            const [connectionType, setConnectionType] = useState('bluetooth');
             const [availableDevices, setAvailableDevices] = useState([]);
             const [isScanning, setIsScanning] = useState(false);
             const [selectedDevice, setSelectedDevice] = useState(null);
@@ -1768,10 +1768,6 @@
                         setIsScanning(false);
                         setAvailableDevices([]);
                     }
-                } else if (type === 'wifi') {
-                    // WiFi connection - show input modal
-                    setIsScanning(false);
-                    setShowWifiInput(true);
                 }
             };
 
@@ -1804,36 +1800,6 @@
                         setShowConnectionModal(false);
                         setSelectedDevice(null);
                         alert(`Connected to ${device.name} via Bluetooth!`);
-
-                    } else if (device.type === 'wifi') {
-                        // Connect via WiFi WebSocket
-                        const ws = new WebSocket(`ws://${device.ipAddress}:81`); // ESP32 typically uses port 81
-
-                        ws.onopen = () => {
-                            console.log('WebSocket connected');
-                            window.flavorStationWS = ws;
-                            setIsConnected(true);
-                            setShowConnectionModal(false);
-                            setSelectedDevice(null);
-                            alert(`Connected to ${device.name} via WiFi!`);
-                        };
-
-                        ws.onerror = (error) => {
-                            console.error('WebSocket error:', error);
-                            alert('Could not connect via WiFi. Make sure the Flavor Station is on the same network.');
-                            setSelectedDevice(null);
-                        };
-
-                        ws.onclose = () => {
-                            console.log('WebSocket disconnected');
-                            setIsConnected(false);
-                            window.flavorStationWS = null;
-                        };
-
-                        ws.onmessage = (event) => {
-                            console.log('Received from device:', event.data);
-                            // Handle incoming messages from ESP32
-                        };
                     }
                 } catch (error) {
                     console.error('Connection error:', error);
@@ -1845,7 +1811,6 @@
             const openConnectionModal = () => {
                 setShowConnectionModal(true);
                 setAvailableDevices([]);
-                setConnectionType(null);
             };
 
             return (
@@ -2302,7 +2267,7 @@
                                             gap: '0.5rem'
                                         }}>
                                             <i className="fas fa-bluetooth"></i>
-                                            Bluetooth Connection (Recommended)
+                                            Bluetooth Connection
                                         </h3>
                                         <div style={{ 
                                             padding: '1.5rem', 
@@ -2313,9 +2278,9 @@
                                             <ol style={{ paddingLeft: '1.5rem', lineHeight: '1.8' }}>
                                                 <li>Power on your Flavor Station ESP32</li>
                                                 <li>Make sure Bluetooth is enabled in your device settings</li>
-                                                <li>Click "Bluetooth" in the connection modal</li>
+                                                <li>Click "Bluetooth" button to scan for devices</li>
                                                 <li>Your browser will show a pairing dialog</li>
-                                                <li>Select your device (usually starts with "Flavor", "ESP32", or "FlavorStation")</li>
+                                                <li>Select "FlavorStation-S3" from the list</li>
                                                 <li>Click "Pair" to establish connection</li>
                                             </ol>
                                         </div>
@@ -2327,42 +2292,6 @@
                                             fontSize: '0.9rem'
                                         }}>
                                             <strong>✓ Supported Browsers:</strong> Chrome, Edge, Opera (Desktop & Mobile)
-                                        </div>
-                                    </div>
-
-                                    <div style={{ marginBottom: '2rem' }}>
-                                        <h3 style={{ 
-                                            color: 'var(--secondary)', 
-                                            marginBottom: '1rem',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '0.5rem'
-                                        }}>
-                                            <i className="fas fa-wifi"></i>
-                                            WiFi Connection
-                                        </h3>
-                                        <div style={{ 
-                                            padding: '1.5rem', 
-                                            background: 'var(--bg-light)', 
-                                            borderRadius: '12px',
-                                            marginBottom: '1rem'
-                                        }}>
-                                            <ol style={{ paddingLeft: '1.5rem', lineHeight: '1.8' }}>
-                                                <li>Connect your computer/phone to the same WiFi network as your ESP32</li>
-                                                <li>Find your ESP32's IP address (check Serial Monitor or router admin panel)</li>
-                                                <li>Click "WiFi" in the connection modal</li>
-                                                <li>Enter the IP address when prompted (e.g., 192.168.1.100)</li>
-                                                <li>Click OK to connect via WebSocket</li>
-                                            </ol>
-                                        </div>
-                                        <div style={{ 
-                                            padding: '1rem', 
-                                            background: 'rgba(255, 183, 3, 0.1)',
-                                            border: '1px solid var(--warning)',
-                                            borderRadius: '8px',
-                                            fontSize: '0.9rem'
-                                        }}>
-                                            <strong>⚠ Note:</strong> WiFi connection requires ESP32 WebSocket server running on port 81
                                         </div>
                                     </div>
 
@@ -2467,17 +2396,9 @@
                                     {!connectionType ? (
                                         <div style={{ textAlign: 'center' }}>
                                             <h3 style={{ marginBottom: '2rem' }}>Choose Connection Method</h3>
-                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', maxWidth: '400px', margin: '0 auto' }}>
                                                 <button 
                                                     className="btn btn-primary" 
-                                                    onClick={() => scanForDevices('wifi')}
-                                                    style={{ padding: '2rem', flexDirection: 'column', gap: '1rem' }}
-                                                >
-                                                    <i className="fas fa-wifi" style={{ fontSize: '3rem' }}></i>
-                                                    <div>WiFi</div>
-                                                </button>
-                                                <button 
-                                                    className="btn btn-secondary" 
                                                     onClick={() => scanForDevices('bluetooth')}
                                                     style={{ padding: '2rem', flexDirection: 'column', gap: '1rem' }}
                                                 >
@@ -2504,11 +2425,11 @@
                                                 background: 'var(--bg-light)',
                                                 borderRadius: '12px'
                                             }}>
-                                                <i className={`fas fa-${connectionType === 'wifi' ? 'wifi' : 'bluetooth'}`} 
+                                                <i className="fas fa-bluetooth" 
                                                    style={{ fontSize: '1.5rem', color: 'var(--primary)' }}></i>
                                                 <div>
                                                     <div style={{ fontWeight: '600' }}>
-                                                        {connectionType === 'wifi' ? 'WiFi' : 'Bluetooth'} Connection
+                                                        Bluetooth Connection
                                                     </div>
                                                     <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                                                         {availableDevices.length} devices found
@@ -3644,7 +3565,7 @@
                 isPremium: false 
             });
             const [showLogin, setShowLogin] = useState(false);
-            const [isConnected, setIsConnected] = useState(true);
+            const [isConnected, setIsConnected] = useState(false);
 
             return (
                 <>

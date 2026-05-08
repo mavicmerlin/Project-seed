@@ -4,6 +4,11 @@
 #include "HX711.h"
 #include <RotaryEncoder.h> 
 #include <AccelStepper.h>
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
+#include <ArduinoJson.h>
 
 // ==========================================
 // 📌 PIN DEFINITIONS
@@ -22,6 +27,88 @@
 #define IN2 16
 #define IN3 17
 #define IN4 18
+
+// ==========================================
+// 🔵 BLUETOOTH UUIDs (Standard BLE UUIDs)
+// ==========================================
+// Using standard 128-bit UUIDs for compatibility
+static BLEUUID serviceUUID("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
+static BLEUUID charCommandUUID("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+static BLEUUID charWeightUUID("a3c87500-8ed3-4bdf-9035-1f3da3229bb3");
+
+// BLE Server pointers
+BLEServer *pServer = NULL;
+BLECharacteristic *pCommandCharacteristic = NULL;
+BLECharacteristic *pWeightCharacteristic = NULL;
+bool deviceConnected = false;
+bool oldDeviceConnected = false;
+
+// Command parsing variables
+String receivedCommand = "";
+bool commandReceived = false;
+int webTargetWhole = 10;
+int webTargetDecimal = 0;
+bool webDispenseRequested = false;
+
+// ==========================================
+// 🔵 BLUETOOTH CALLBACKS
+// ==========================================
+class MyServerCallbacks : public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+      Serial.println("Bluetooth device connected");
+    };
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+      Serial.println("Bluetooth device disconnected");
+      // Restart advertising to allow reconnection
+      BLEDevice::startAdvertising();
+    }
+};
+
+class MyCommandCallbacks : public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic) {
+      std::string value = pCharacteristic->getValue();
+      if (value.length() > 0) {
+        Serial.print("Received command: ");
+        Serial.println(value.c_str());
+        
+        // Parse JSON command
+        StaticJsonDocument<256> doc;
+        DeserializationError error = deserializeJson(doc, value.c_str());
+        
+        if (!error) {
+          const char* action = doc["action"];
+          if (action && strcmp(action, "dispense") == 0) {
+            // Extract target weight from flavors (use sweet as example, or sum all)
+            float totalFlavor = 0;
+            if (doc.containsKey("flavors")) {
+              totalFlavor += doc["flavors"]["spicy"] | 0;
+              totalFlavor += doc["flavors"]["salty"] | 0;
+              totalFlavor += doc["flavors"]["sweet"] | 0;
+              totalFlavor += doc["flavors"]["umami"] | 0;
+            }
+            
+            // Map flavor total (0-400) to weight (0-40g)
+            int targetWeight = (int)(totalFlavor / 10.0);
+            if (targetWeight < 1) targetWeight = 10; // Default
+            
+            webTargetWhole = targetWeight;
+            webTargetDecimal = 0;
+            webDispenseRequested = true;
+            commandReceived = true;
+            
+            Serial.print("Parsed dispense command - Target: ");
+            Serial.print(targetWeight);
+            Serial.println("g");
+          }
+        } else {
+          Serial.print("JSON parse error: ");
+          Serial.println(error.c_str());
+        }
+      }
+    }
+};
 
 // ==========================================
 // 📦 OBJECTS & CONSTRUCTORS (THE SWAP)
@@ -79,6 +166,45 @@ void IRAM_ATTR checkPosition() { encoder.tick(); }
 // ==========================================
 void setup() {
   Serial.begin(115200);
+  
+  // Initialize Bluetooth
+  BLEDevice::init("FlavorStation-S3");
+  
+  // Create the BLE Server
+  pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyServerCallbacks());
+  
+  // Create the BLE Service
+  BLEService *pService = pServer->createService(serviceUUID);
+  
+  // Create Command Characteristic (for receiving commands from web app)
+  pCommandCharacteristic = pService->createCharacteristic(
+                      charCommandUUID,
+                      BLECharacteristic::PROPERTY_WRITE | 
+                      BLECharacteristic::PROPERTY_WRITE_NR
+                    );
+  pCommandCharacteristic->setCallbacks(new MyCommandCallbacks());
+  
+  // Create Weight Characteristic (for sending weight to web app)
+  pWeightCharacteristic = pService->createCharacteristic(
+                      charWeightUUID,
+                      BLECharacteristic::PROPERTY_READ | 
+                      BLECharacteristic::PROPERTY_NOTIFY
+                    );
+  pWeightCharacteristic->addDescriptor(new BLE2902());
+  
+  // Start the service
+  pService->start();
+  
+  // Start advertising
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(serviceUUID);
+  pAdvertising->setScanResponse(true);
+  pAdvertising->setMinPreferred(0x06);
+  pAdvertising->setMinPreferred(0x12);
+  BLEDevice::startAdvertising();
+  
+  Serial.println("Bluetooth ready. Waiting for connection...");
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_CLK), checkPosition, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ENCODER_DT), checkPosition, CHANGE);
@@ -115,10 +241,40 @@ void setup() {
 // 🔄 MAIN LOOP
 // ==========================================
 void loop() {
+  // Handle Bluetooth disconnection/reconnection events
+  if (deviceConnected != oldDeviceConnected) {
+    if (deviceConnected) {
+      Serial.println("Client connected");
+    } else {
+      Serial.println("Client disconnected");
+    }
+    oldDeviceConnected = deviceConnected;
+  }
+  
+  // Send weight update via BLE if connected (throttled to avoid flooding)
+  static unsigned long lastWeightUpdate = 0;
+  if (deviceConnected && pWeightCharacteristic && millis() - lastWeightUpdate > 500) {
+    char weightStr[20];
+    sprintf(weightStr, "{\"w\":%.1f}", currentWeight);
+    pWeightCharacteristic->setValue(weightStr);
+    pWeightCharacteristic->notify();
+    lastWeightUpdate = millis();
+  }
+
   // 1. FAST TASKS: These must run thousands of times per second
   handleButton();
   handleEncoder();
   readScale();
+  
+  // Check for web dispense command and update target if needed
+  if (webDispenseRequested && s2State == S2_HOVER) {
+    targetWhole = webTargetWhole;
+    targetDecimal = webTargetDecimal;
+    s2State = S2_DISPENSING; // Go directly to dispensing
+    webDispenseRequested = false;
+    Serial.println("Web command: Starting dispensing immediately");
+  }
+  
   runMotorLogic();
 
   // 2. SLOW TASKS: Cap the screen refresh rate to fix the motor CPU choke!
@@ -188,7 +344,9 @@ void executeShortClick() {
       s2State = S2_HOVER; // Save and go back to hover
     }
     else if (s2State == S2_CONFIRM) {
-      if (s2ConfirmIndex == 1) s2State = S2_DISPENSING;
+      if (s2ConfirmIndex == 1) {
+        s2State = S2_DISPENSING;
+      }
       else s2State = S2_HOVER; 
     }
   }
