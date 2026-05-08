@@ -6,11 +6,14 @@
     <title>FlavorStation - Smart Cooking Companion</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- RESET & VARIABLES --- */
+        /* =========================================
+           ROOT VARIABLES & RESET
+           ========================================= */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            outline: none;
         }
 
         :root {
@@ -18,17 +21,20 @@
             --primary-dark: #DC2F02;
             --primary-light: #F48C06;
             --secondary: #2A9D8F;
+            --secondary-dark: #21867a;
             --accent: #FFB703;
             --bg-dark: #0A0A0A;
             --bg-medium: #1A1A1A;
             --bg-light: #2A2A2A;
+            --bg-card: #222222;
             --text-primary: #FFFFFF;
             --text-secondary: #B0B0B0;
             --text-tertiary: #707070;
             --border: #333333;
+            --border-light: #444444;
             --success: #06D6A0;
-            --warning: #FFB703;
             --error: #EF476F;
+            --warning: #FFB703;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
             --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
@@ -36,6 +42,7 @@
             --radius-md: 12px;
             --radius-lg: 20px;
             --radius-xl: 24px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         body {
@@ -44,6 +51,8 @@
             color: var(--text-primary);
             overflow-x: hidden;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         #root {
@@ -52,42 +61,87 @@
             flex-direction: column;
         }
 
-        /* --- ANIMATIONS --- */
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-light);
+            border-radius: 5px;
+            border: 2px solid var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* =========================================
+           ANIMATIONS
+           ========================================= */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
 
-        @keyframes rotate {
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-
-        /* --- NAVIGATION --- */
+        /* =========================================
+           NAVIGATION
+           ========================================= */
         .nav {
             background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
             position: sticky;
             top: 0;
             z-index: 1000;
             animation: fadeInUp 0.6s ease-out;
+            box-shadow: var(--shadow-sm);
         }
 
         .nav-container {
@@ -108,16 +162,17 @@
             background-clip: text;
             letter-spacing: -0.5px;
             cursor: pointer;
-            transition: opacity 0.3s ease;
+            transition: var(--transition);
         }
 
         .logo:hover {
-            opacity: 0.8;
+            transform: scale(1.02);
+            filter: brightness(1.1);
         }
 
         .nav-menu {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             align-items: center;
         }
 
@@ -125,14 +180,17 @@
             color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            transition: var(--transition);
             position: relative;
             padding: 0.5rem 0;
             cursor: pointer;
-            font-size: 1rem;
         }
 
-        .nav-link:hover,
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
         .nav-link.active {
             color: var(--primary);
         }
@@ -146,6 +204,7 @@
             height: 2px;
             background: var(--primary);
             border-radius: 2px;
+            animation: slideInRight 0.3s ease-out;
         }
 
         .user-menu {
@@ -154,7 +213,9 @@
             gap: 1rem;
         }
 
-        /* --- BUTTONS --- */
+        /* =========================================
+           BUTTONS
+           ========================================= */
         .btn {
             padding: 0.875rem 2rem;
             border: none;
@@ -162,13 +223,14 @@
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             font-family: 'DM Sans', sans-serif;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            text-decoration: none;
+            text-transform: none;
+            letter-spacing: 0.3px;
         }
 
         .btn-primary {
@@ -180,6 +242,11 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 24px rgba(232, 93, 4, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .btn-outline {
@@ -194,16 +261,26 @@
             background: rgba(232, 93, 4, 0.05);
         }
 
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #05B58C);
+            color: white;
+            box-shadow: 0 4px 16px rgba(6, 214, 160, 0.3);
         }
 
-        .btn-block {
-            width: 100%;
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(6, 214, 160, 0.4);
         }
 
-        /* --- MAIN CONTAINER --- */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* =========================================
+           MAIN LAYOUT
+           ========================================= */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -213,27 +290,51 @@
             width: 100%;
         }
 
-        /* --- HERO SECTION --- */
+        .page {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .page.hidden {
+            display: none;
+        }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
         .hero {
-            background: linear-gradient(135deg, rgba(232, 93, 4, 0.1), rgba(42, 157, 143, 0.1));
+            background: linear-gradient(135deg, rgba(232, 93, 4, 0.15), rgba(42, 157, 143, 0.1));
+            border: 1px solid rgba(232, 93, 4, 0.2);
             border-radius: var(--radius-xl);
-            padding: 4rem;
+            padding: 5rem 3rem;
             margin-bottom: 3rem;
             position: relative;
             overflow: hidden;
             text-align: center;
-            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
         }
 
         .hero::before {
             content: '';
             position: absolute;
             top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(232, 93, 4, 0.2), transparent);
-            animation: pulse 4s ease-in-out infinite;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(232, 93, 4, 0.25), transparent 70%);
+            animation: pulse 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(42, 157, 143, 0.2), transparent 70%);
+            animation: pulse 8s ease-in-out infinite reverse;
             pointer-events: none;
         }
 
@@ -248,41 +349,44 @@
             font-family: 'Playfair Display', serif;
             font-size: 3.5rem;
             font-weight: 900;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             line-height: 1.2;
-            background: linear-gradient(135deg, #fff, var(--text-secondary));
+            background: linear-gradient(to right, #fff, #e0e0e0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: var(--text-secondary);
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        /* --- CONNECTION PANEL --- */
+        /* =========================================
+           CONNECTION PANEL
+           ========================================= */
         .connection-panel {
             background: var(--bg-medium);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 1.5rem 2rem;
-            margin: 2rem auto;
-            max-width: 600px;
+            padding: 1.5rem 2.5rem;
+            margin: 0 auto 3rem auto;
+            max-width: 700px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
         }
 
         .connection-panel:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 24px rgba(232, 93, 4, 0.15);
+            border-color: var(--primary-light);
+            box-shadow: 0 6px 24px rgba(232, 93, 4, 0.15);
         }
 
         .status-display {
@@ -292,17 +396,18 @@
         }
 
         .status-dot {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--error);
-            box-shadow: 0 0 10px var(--error);
-            transition: all 0.3s ease;
+            box-shadow: 0 0 12px var(--error);
+            transition: var(--transition);
+            position: relative;
         }
 
         .status-dot.connected {
             background: var(--success);
-            box-shadow: 0 0 10px var(--success);
+            box-shadow: 0 0 12px var(--success);
             animation: pulse 2s ease-in-out infinite;
         }
 
@@ -315,57 +420,62 @@
         .connect-btn {
             background: var(--primary);
             color: white;
-            padding: 0.8rem 1.5rem;
+            padding: 0.9rem 2rem;
             border-radius: var(--radius-md);
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             border: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
             font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(232, 93, 4, 0.3);
         }
 
         .connect-btn:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(232, 93, 4, 0.4);
+            box-shadow: 0 6px 20px rgba(232, 93, 4, 0.5);
         }
 
-        /* --- SECTIONS & GRID --- */
+        /* =========================================
+           SECTIONS & GRIDS
+           ========================================= */
         .section-title {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            margin-top: 2rem;
+            margin-top: 1rem;
             color: var(--text-primary);
         }
 
         .section-subtitle {
             color: var(--text-secondary);
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             font-size: 1.1rem;
+            max-width: 600px;
         }
 
         .recipe-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
         }
 
         .recipe-card {
-            background: var(--bg-medium);
+            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             animation: fadeInUp 0.6s ease-out backwards;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
         .recipe-card:nth-child(1) { animation-delay: 0.1s; }
@@ -376,16 +486,16 @@
         .recipe-card:nth-child(6) { animation-delay: 0.6s; }
 
         .recipe-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-10px);
             border-color: var(--primary);
-            box-shadow: 0 12px 32px rgba(232, 93, 4, 0.2);
+            box-shadow: 0 12px 32px rgba(232, 93, 4, 0.25);
         }
 
         .recipe-image-wrapper {
-            position: relative;
             width: 100%;
-            height: 200px;
+            height: 220px;
             overflow: hidden;
+            position: relative;
             background: var(--bg-light);
         }
 
@@ -407,45 +517,151 @@
             flex-direction: column;
         }
 
-        .recipe-title {
-            font-size: 1.3rem;
+        .recipe-category {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
             font-weight: 700;
             margin-bottom: 0.5rem;
+        }
+
+        .recipe-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
             color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .recipe-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.2rem;
+            line-height: 1.5;
+            flex: 1;
         }
 
         .recipe-meta {
             display: flex;
             gap: 1.5rem;
-            color: var(--text-secondary);
+            color: var(--text-tertiary);
             font-size: 0.9rem;
-            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
             margin-top: auto;
         }
 
-        .recipe-badge {
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* =========================================
+           PREMIUM SECTION (HOME BOTTOM)
+           ========================================= */
+        .premium-section {
+            background: linear-gradient(135deg, #1a0b00, #2a1a05);
+            border: 1px solid var(--primary-dark);
+            border-radius: var(--radius-xl);
+            padding: 4rem 3rem;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(232, 93, 4, 0.1);
+        }
+
+        .premium-section::before {
+            content: '';
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(0, 0, 0, 0.7);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+        }
+
+        .premium-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .premium-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(232, 93, 4, 0.3);
+        }
+
+        .premium-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .premium-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .premium-card {
+            background: rgba(42, 42, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
             backdrop-filter: blur(10px);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            background: rgba(42, 42, 42, 0.8);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .premium-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .premium-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
             color: var(--text-primary);
         }
 
-        /* --- PREMIUM PAGE --- */
+        .premium-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* =========================================
+           PREMIUM PAGE (FULL)
+           ========================================= */
         .premium-hero {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             border-radius: var(--radius-xl);
-            padding: 4rem;
+            padding: 5rem 3rem;
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
             position: relative;
             overflow: hidden;
-            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(232, 93, 4, 0.3);
         }
 
         .premium-hero::before {
@@ -453,35 +669,32 @@
             position: absolute;
             top: -50%;
             right: -20%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent);
             border-radius: 50%;
         }
 
         .premium-hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
             color: white;
             position: relative;
-            z-index: 1;
         }
 
         .premium-hero p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto 2rem;
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
             position: relative;
-            z-index: 1;
-            color: rgba(255,255,255,0.9);
         }
 
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
             margin-top: 3rem;
         }
 
@@ -489,9 +702,9 @@
             background: var(--bg-medium);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 2.5rem;
+            padding: 3rem 2.5rem;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -500,7 +713,8 @@
         .pricing-card.featured {
             border-color: var(--accent);
             transform: scale(1.05);
-            box-shadow: 0 10px 40px rgba(255, 183, 3, 0.15);
+            box-shadow: 0 15px 50px rgba(255, 183, 3, 0.15);
+            background: linear-gradient(180deg, rgba(255, 183, 3, 0.05), var(--bg-medium));
             z-index: 2;
         }
 
@@ -513,69 +727,79 @@
             transform: scale(1.05) translateY(-10px);
         }
 
+        .badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--bg-dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.4);
+        }
+
         .plan-name {
             font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
         }
 
         .price {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
             color: var(--primary);
-            margin: 1.5rem 0;
+            margin: 1rem 0;
             font-family: 'Playfair Display', serif;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .price span {
-            font-size: 1rem;
-            color: var(--text-secondary);
+            font-size: 1.2rem;
+            color: var(--text-tertiary);
             font-weight: 400;
+            margin-top: 0.8rem;
         }
 
         .features-list {
             list-style: none;
-            margin: 2rem 0;
+            margin: 2.5rem 0;
             text-align: left;
             flex: 1;
         }
 
         .features-list li {
-            padding: 0.8rem 0;
+            padding: 1rem 0;
             border-bottom: 1px solid var(--border);
             color: var(--text-secondary);
             display: flex;
-            align-items: center;
-            gap: 0.8rem;
+            align-items: flex-start;
+            gap: 1rem;
+            font-size: 1rem;
         }
 
         .features-list li:last-child {
             border-bottom: none;
         }
 
-        .check {
+        .check-icon {
             color: var(--success);
             font-weight: bold;
             font-size: 1.2rem;
+            flex-shrink: 0;
         }
 
-        .best-value-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: var(--bg-dark);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* --- MODAL --- */
+        /* =========================================
+           MODALS
+           ========================================= */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -583,7 +807,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -602,12 +826,13 @@
             background: var(--bg-medium);
             border: 1px solid var(--border);
             border-radius: var(--radius-xl);
-            max-width: 600px;
             width: 100%;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            animation: slideInRight 0.4s ease-out;
+            animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--shadow-lg);
+            position: relative;
         }
 
         .modal-header {
@@ -625,6 +850,7 @@
         .modal-title {
             font-family: 'Playfair Display', serif;
             font-size: 1.8rem;
+            font-weight: 700;
             color: var(--text-primary);
         }
 
@@ -632,33 +858,44 @@
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
-            transition: color 0.3s ease;
-            padding: 0.5rem;
+            transition: var(--transition);
             line-height: 1;
+            padding: 0.5rem;
         }
 
         .close-btn:hover {
             color: var(--primary);
+            transform: rotate(90deg);
         }
 
         .modal-body {
             padding: 2rem;
         }
 
+        /* Setup Steps */
         .setup-step {
             background: var(--bg-light);
             padding: 1.5rem;
             border-radius: var(--radius-md);
-            margin-bottom: 1rem;
-            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .setup-step:hover {
+            transform: translateX(5px);
+            background: #333;
         }
 
         .setup-step h4 {
             color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .setup-step p {
@@ -670,181 +907,255 @@
         .modal-actions {
             display: flex;
             gap: 1rem;
-            margin-top: 2rem;
+            margin-top: 2.5rem;
         }
 
-        /* --- RECIPE DETAIL MODAL --- */
+        /* Recipe Detail Modal */
         .recipe-detail-modal {
             max-width: 900px;
+            max-height: 95vh;
+        }
+
+        .detail-image-wrapper {
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            position: relative;
         }
 
         .detail-image {
             width: 100%;
-            height: 300px;
+            height: 100%;
             object-fit: cover;
-            border-radius: var(--radius-md);
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 2rem;
             margin-bottom: 2rem;
+            padding: 1.5rem;
             background: var(--bg-light);
+            border-radius: var(--radius-md);
+            flex-wrap: wrap;
+        }
+
+        .detail-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
         }
 
         .ingredients-list {
             list-style: none;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .ingredient-item {
-            padding: 1rem;
+            padding: 1.2rem;
             background: var(--bg-light);
             border-radius: var(--radius-md);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid var(--border);
+            border: 1px solid transparent;
+            transition: var(--transition);
+        }
+
+        .ingredient-item:hover {
+            border-color: var(--primary);
+            background: #333;
         }
 
         .steps-list {
             list-style: none;
+            counter-reset: step-counter;
         }
 
         .step-item {
-            padding: 1.5rem;
+            padding: 2rem 1.5rem 2rem 4.5rem;
             background: var(--bg-light);
             border-radius: var(--radius-md);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             position: relative;
-            padding-left: 4rem;
-            border: 1px solid var(--border);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .step-item:hover {
+            border-color: var(--primary-light);
+            transform: translateX(5px);
         }
 
         .step-number {
             position: absolute;
             left: 1.5rem;
             top: 1.5rem;
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
+            font-weight: 800;
             color: white;
-            font-size: 1rem;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(232, 93, 4, 0.4);
+        }
+
+        .step-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1.05rem;
         }
 
         .guidance-btn {
             width: 100%;
             padding: 1.2rem;
-            background: linear-gradient(135deg, var(--secondary), #21867a);
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
             color: white;
             border: none;
             border-radius: var(--radius-md);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             cursor: pointer;
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            gap: 1rem;
+            transition: var(--transition);
             box-shadow: 0 4px 16px rgba(42, 157, 143, 0.3);
         }
 
         .guidance-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             box-shadow: 0 6px 24px rgba(42, 157, 143, 0.5);
+            filter: brightness(1.1);
         }
 
-        /* --- MEAL PLANNER --- */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1rem;
+        /* Guidance Mode Overlay */
+        .guidance-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .guidance-overlay.active {
+            display: flex;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .guidance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .guidance-progress {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-light);
+            border-radius: 3px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .guidance-step {
+            background: var(--bg-medium);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .guidance-step.active {
+            display: block;
+        }
+
+        .guidance-step h3 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .guidance-step p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .guidance-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
             margin-top: 2rem;
         }
 
-        .day-card {
-            background: var(--bg-medium);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            min-height: 150px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .day-header {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-            text-align: center;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .meal-slot {
-            background: var(--bg-light);
-            border-radius: 6px;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        .meal-slot:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .meal-slot.empty {
-            border: 1px dashed var(--border);
-            background: transparent;
-            color: var(--text-tertiary);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            font-style: italic;
-        }
-
-        .meal-slot.empty:hover {
-            border-color: var(--text-secondary);
-            color: var(--text-secondary);
-            background: transparent;
-        }
-
-        /* --- AUTH MODAL --- */
+        /* Auth Modal */
         .auth-tabs {
             display: flex;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             border-bottom: 1px solid var(--border);
+            background: var(--bg-light);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            overflow: hidden;
         }
 
         .auth-tab {
             flex: 1;
-            padding: 1rem;
+            padding: 1.2rem;
             text-align: center;
             cursor: pointer;
             color: var(--text-secondary);
-            transition: all 0.3s ease;
+            transition: var(--transition);
             font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .auth-tab:hover {
+            background: rgba(232, 93, 4, 0.1);
+            color: var(--text-primary);
         }
 
         .auth-tab.active {
             color: var(--primary);
+            background: var(--bg-medium);
             border-bottom: 2px solid var(--primary);
         }
 
         .auth-form {
             display: none;
-            animation: fadeInUp 0.3s ease-out;
+            animation: fadeInUp 0.4s ease;
         }
 
         .auth-form.active {
@@ -857,38 +1168,106 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             font-weight: 600;
             color: var(--text-primary);
+            font-size: 0.95rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 0.8rem;
+            padding: 1rem;
             background: var(--bg-light);
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             color: var(--text-primary);
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: var(--transition);
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(232, 93, 4, 0.1);
+            background: #333;
         }
 
-        /* --- UTILITIES --- */
-        .hidden {
-            display: none !important;
+        /* Meal Planner */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
         }
 
-        .page {
-            animation: fadeInUp 0.5s ease-out;
+        .day-card {
+            background: var(--bg-medium);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
         }
 
-        /* --- RESPONSIVE --- */
+        .day-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .day-header {
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .meal-slot {
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 3px solid var(--secondary);
+            color: var(--text-secondary);
+        }
+
+        .meal-slot:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .meal-slot.empty {
+            border: 1px dashed var(--border);
+            background: transparent;
+            color: var(--text-tertiary);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            border-left: none;
+            font-style: italic;
+        }
+
+        .meal-slot.empty:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(232, 93, 4, 0.05);
+        }
+
+        /* Responsive */
         @media (max-width: 1024px) {
             .calendar-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -899,43 +1278,42 @@
             .nav-menu {
                 gap: 1rem;
             }
-            
             .nav-link {
                 font-size: 0.9rem;
             }
-
             .hero {
-                padding: 2rem;
+                padding: 3rem 1.5rem;
             }
-
             .hero h1 {
                 font-size: 2.5rem;
             }
-
             .recipe-grid {
                 grid-template-columns: 1fr;
             }
-
             .calendar-grid {
                 grid-template-columns: 1fr;
             }
-
             .connection-panel {
                 flex-direction: column;
                 gap: 1.5rem;
                 text-align: center;
                 justify-content: center;
             }
-
             .pricing-card.featured {
                 transform: scale(1);
             }
-            
-            .modal {
-                max-width: 95%;
-                margin: 1rem;
+            .pricing-card.featured:hover {
+                transform: translateY(-10px);
+            }
+            .detail-image-wrapper {
+                height: 250px;
+            }
+            .premium-title {
+                font-size: 2.2rem;
             }
         }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -950,10 +1328,10 @@
                 <a class="nav-link" onclick="showPage('premium')">Premium</a>
             </div>
             <div class="user-menu">
-                <button id="authBtn" class="btn btn-outline btn-sm" onclick="openAuthModal()">Login</button>
+                <button id="authBtn" class="btn btn-outline" onclick="openAuthModal()">Login</button>
                 <div id="userInfo" class="hidden" style="display: flex; align-items: center; gap: 1rem;">
-                    <span id="userName" style="font-weight: 600; color: var(--text-secondary);"></span>
-                    <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+                    <span id="userName" style="font-weight: 600;"></span>
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
                 </div>
             </div>
         </div>
@@ -970,7 +1348,7 @@
                 </div>
             </div>
 
-            <!-- Connection Panel (Above Recommended) -->
+            <!-- Connection Panel (Wider, Above Recommended) -->
             <div class="connection-panel">
                 <div class="status-display">
                     <div class="status-dot" id="statusDot"></div>
@@ -981,22 +1359,55 @@
 
             <!-- Recommended Section -->
             <h2 class="section-title">Recommended for You</h2>
-            <p class="section-subtitle">Curated recipes based on popular choices</p>
+            <p class="section-subtitle">Curated recipes based on popular choices and seasonal trends</p>
             <div class="recipe-grid" id="recommendedGrid"></div>
+
+            <!-- Premium Features Section (Bottom of Home) -->
+            <div class="premium-section">
+                <div class="premium-header">
+                    <h2 class="premium-title">Why Go Premium?</h2>
+                    <p class="premium-subtitle">Unlock the full potential of your culinary journey with advanced tools and exclusive content.</p>
+                </div>
+                <div class="premium-grid">
+                    <div class="premium-card">
+                        <div class="premium-icon">🧠</div>
+                        <h3>AI Meal Planning</h3>
+                        <p>Get personalized weekly meal plans tailored to your dietary goals, preferences, and available ingredients.</p>
+                    </div>
+                    <div class="premium-card">
+                        <div class="premium-icon">📊</div>
+                        <h3>Advanced Nutrition</h3>
+                        <p>Track macros, micros, and calories with precision. Get detailed insights into your nutritional intake.</p>
+                    </div>
+                    <div class="premium-card">
+                        <div class="premium-icon">👨‍🍳</div>
+                        <h3>Chef Exclusives</h3>
+                        <p>Access over 500 exclusive recipes created by world-renowned chefs, updated monthly.</p>
+                    </div>
+                    <div class="premium-card">
+                        <div class="premium-icon">🛒</div>
+                        <h3>Smart Shopping</h3>
+                        <p>Automatically generate optimized shopping lists from your meal plan, sorted by aisle.</p>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 3rem;">
+                    <button class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="showPage('premium')">View Plans</button>
+                </div>
+            </div>
         </div>
 
         <!-- Recipes Page -->
         <div id="recipesPage" class="page hidden">
             <h2 class="section-title">Discover Recipes</h2>
-            <p class="section-subtitle">Explore our collection of 100+ delicious recipes</p>
-            <div style="margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;" id="filterContainer"></div>
+            <p class="section-subtitle">Explore our collection of 100+ delicious, hand-crafted recipes</p>
+            <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;" id="filterContainer"></div>
             <div class="recipe-grid" id="recipesGrid"></div>
         </div>
 
         <!-- Meal Planner Page -->
         <div id="plannerPage" class="page hidden">
             <h2 class="section-title">Weekly Meal Planner</h2>
-            <p class="section-subtitle">Plan your meals for the week ahead</p>
+            <p class="section-subtitle">Organize your week with delicious, balanced meals</p>
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
 
@@ -1005,31 +1416,33 @@
             <div class="premium-hero">
                 <h1>Unlock Premium Features</h1>
                 <p>Elevate your cooking experience with AI-powered planning, advanced nutrition tracking, and exclusive chef recipes.</p>
-                <button class="btn btn-primary" style="background: white; color: var(--primary);" onclick="openAuthModal()">Start Free Trial</button>
+                <button class="btn btn-primary" style="background: white; color: var(--primary); font-size: 1.1rem; padding: 1rem 2.5rem;" onclick="openAuthModal()">Start Free Trial</button>
             </div>
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <h3 class="plan-name">Monthly</h3>
                     <div class="price">$9.99<span>/mo</span></div>
                     <ul class="features-list">
-                        <li><span class="check">✓</span> AI Meal Planning</li>
-                        <li><span class="check">✓</span> Nutrition Tracking</li>
-                        <li><span class="check">✓</span> 500+ Exclusive Recipes</li>
-                        <li><span class="check">✓</span> Ad-free Experience</li>
+                        <li><span class="check-icon">✓</span> AI Meal Planning</li>
+                        <li><span class="check-icon">✓</span> Nutrition Tracking</li>
+                        <li><span class="check-icon">✓</span> 500+ Exclusive Recipes</li>
+                        <li><span class="check-icon">✓</span> Ad-free Experience</li>
+                        <li><span class="check-icon">✓</span> Smart Shopping Lists</li>
                     </ul>
-                    <button class="btn btn-primary btn-block" onclick="openAuthModal()">Subscribe Now</button>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="openAuthModal()">Subscribe Now</button>
                 </div>
                 <div class="pricing-card featured">
-                    <div class="best-value-badge">Best Value</div>
+                    <div class="badge">Best Value</div>
                     <h3 class="plan-name">Yearly</h3>
                     <div class="price">$99.99<span>/yr</span></div>
                     <ul class="features-list">
-                        <li><span class="check">✓</span> Everything in Monthly</li>
-                        <li><span class="check">✓</span> 2 Months Free</li>
-                        <li><span class="check">✓</span> Priority Support</li>
-                        <li><span class="check">✓</span> Early Access Features</li>
+                        <li><span class="check-icon">✓</span> Everything in Monthly</li>
+                        <li><span class="check-icon">✓</span> 2 Months Free</li>
+                        <li><span class="check-icon">✓</span> Priority Support</li>
+                        <li><span class="check-icon">✓</span> Early Access Features</li>
+                        <li><span class="check-icon">✓</span> Exclusive Video Tutorials</li>
                     </ul>
-                    <button class="btn btn-primary btn-block" onclick="openAuthModal()">Subscribe Now</button>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="openAuthModal()">Subscribe Now</button>
                 </div>
             </div>
         </div>
@@ -1045,15 +1458,15 @@
             <div class="modal-body">
                 <div class="setup-step">
                     <h4>1. Power On Your Device</h4>
-                    <p>Make sure your FlavorStation-S3 is powered on and within range (10 meters). The LED should be blinking blue.</p>
+                    <p>Ensure your FlavorStation-S3 is powered on and within Bluetooth range (approximately 10 meters).</p>
                 </div>
                 <div class="setup-step">
                     <h4>2. Enable Bluetooth</h4>
-                    <p>Ensure Bluetooth is enabled on your computer or mobile device. Chrome or Edge browsers are recommended for Web Bluetooth API support.</p>
+                    <p>Make sure Bluetooth is enabled on your computer or mobile device. The browser will request permission to scan.</p>
                 </div>
                 <div class="setup-step">
-                    <h4>3. Click Connect</h4>
-                    <p>Select "FlavorStation-S3" from the browser popup that appears. You may need to grant permission for the site to access Bluetooth devices.</p>
+                    <h4>3. Select Device</h4>
+                    <p>Click "Connect Now" and select "FlavorStation-S3" from the list of available devices in the popup window.</p>
                 </div>
                 <div class="modal-actions">
                     <button class="btn btn-outline" style="flex: 1;" onclick="connectBluetooth()">Rescan Devices</button>
@@ -1071,24 +1484,44 @@
                 <button class="close-btn" onclick="closeModal('recipeModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <img src="" alt="" class="detail-image" id="detailImage">
-                <div class="recipe-meta" id="detailMeta" style="margin-bottom: 1.5rem; font-size: 1rem;"></div>
+                <div class="detail-image-wrapper">
+                    <img src="" alt="" class="detail-image" id="detailImage">
+                </div>
+                <div class="detail-meta" id="detailMeta"></div>
                 
-                <h4 style="margin-bottom: 1rem; color: var(--primary);">Ingredients</h4>
+                <h4 style="margin-bottom: 1.5rem; font-size: 1.4rem; color: var(--primary);">Ingredients</h4>
                 <ul class="ingredients-list" id="detailIngredients"></ul>
                 
-                <h4 style="margin-bottom: 1rem; color: var(--primary);">Instructions</h4>
+                <h4 style="margin-bottom: 1.5rem; font-size: 1.4rem; color: var(--primary);">Instructions</h4>
                 <ol class="steps-list" id="detailSteps"></ol>
                 
                 <button class="guidance-btn" onclick="startGuidance()">
-                    👨‍🍳 Cook with Guidance
+                    Start Cooking with Guidance
                 </button>
                 
-                <div class="modal-actions" style="margin-top: 1rem;">
-                    <button class="btn btn-outline" style="flex: 1;" id="favBtn" onclick="toggleFavoriteFromDetail()">❤️ Favorite</button>
-                    <button class="btn btn-outline" style="flex: 1;" onclick="addToPlanFromDetail()">📅 Add to Plan</button>
+                <div class="modal-actions" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                    <button class="btn btn-outline" style="flex: 1;" id="favBtn" onclick="toggleFavoriteFromDetail()">Add to Favorites</button>
+                    <button class="btn btn-outline" style="flex: 1;" onclick="addToPlanFromDetail()">Add to Meal Plan</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Guidance Mode Overlay -->
+    <div class="guidance-overlay" id="guidanceOverlay">
+        <div class="guidance-header">
+            <h2 id="guidanceTitle" style="font-family: 'Playfair Display'; font-size: 1.8rem;">Cooking Mode</h2>
+            <button class="btn btn-outline" onclick="closeGuidance()">Exit Mode</button>
+        </div>
+        <div class="guidance-progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div id="guidanceStepsContainer">
+            <!-- Steps injected here -->
+        </div>
+        <div class="guidance-controls">
+            <button class="btn btn-outline" id="prevStepBtn" onclick="changeStep(-1)">Previous</button>
+            <button class="btn btn-primary" id="nextStepBtn" onclick="changeStep(1)">Next Step</button>
         </div>
     </div>
 
@@ -1113,7 +1546,7 @@
                         <label>Password</label>
                         <input type="password" required id="loginPassword" placeholder="••••••••">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Login to Account</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login to Account</button>
                 </form>
                 <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
                     <div class="form-group">
@@ -1128,55 +1561,118 @@
                         <label>Password</label>
                         <input type="password" required id="signupPassword" placeholder="Create a strong password">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        // --- DATA: 100+ RECIPES ---
+        // --- Data: 100 Unique Recipes ---
         const recipes = [
-            { id: 1, title: "Classic Pancakes", category: "Breakfast", time: "20 min", calories: 350, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80", ingredients: ["2 cups flour", "2 eggs", "1 cup milk", "Sugar", "Baking powder"], steps: ["Mix dry ingredients", "Add wet ingredients", "Cook on griddle until golden"] },
-            { id: 2, title: "Avocado Toast", category: "Breakfast", time: "10 min", calories: 250, image: "https://images.unsplash.com/photo-1588137372308-15f75323ca8d?auto=format&fit=crop&w=800&q=80", ingredients: ["Sourdough bread", "Ripe avocado", "Salt", "Pepper", "Lemon juice"], steps: ["Toast bread", "Mash avocado with spices", "Spread and serve"] },
-            { id: 3, title: "Greek Yogurt Bowl", category: "Breakfast", time: "5 min", calories: 300, image: "https://images.unsplash.com/photo-1563514227147-6d243bb8aa84?auto=format&fit=crop&w=800&q=80", ingredients: ["Greek yogurt", "Honey", "Mixed berries", "Granola"], steps: ["Add yogurt to bowl", "Top with fruits", "Drizzle honey"] },
-            { id: 4, title: "Spinach Omelette", category: "Breakfast", time: "15 min", calories: 280, image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=800&q=80", ingredients: ["3 eggs", "Fresh spinach", "Feta cheese", "Olive oil"], steps: ["Whisk eggs", "Sauté spinach", "Cook omelette and fold"] },
-            { id: 5, title: "Berry Smoothie Bowl", category: "Breakfast", time: "10 min", calories: 320, image: "https://images.unsplash.com/photo-1577805947697-b9e9c43c1ebd?auto=format&fit=crop&w=800&q=80", ingredients: ["Frozen berries", "Banana", "Almond milk", "Chia seeds"], steps: ["Blend fruits", "Pour into bowl", "Add toppings"] },
-            { id: 6, title: "Grilled Chicken Salad", category: "Lunch", time: "25 min", calories: 400, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80", ingredients: ["Chicken breast", "Mixed greens", "Cherry tomatoes", "Olive oil dressing"], steps: ["Grill chicken", "Chop veggies", "Toss together"] },
-            { id: 7, title: "Caesar Salad", category: "Lunch", time: "15 min", calories: 350, image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=800&q=80", ingredients: ["Romaine lettuce", "Croutons", "Parmesan", "Caesar dressing"], steps: ["Wash lettuce", "Add toppings", "Dress and serve"] },
-            { id: 8, title: "Turkey Club Wrap", category: "Lunch", time: "10 min", calories: 380, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80", ingredients: ["Tortilla", "Turkey slices", "Lettuce", "Mayo", "Bacon"], steps: ["Lay out tortilla", "Add ingredients", "Roll tightly"] },
-            { id: 9, title: "Quinoa Power Bowl", category: "Lunch", time: "20 min", calories: 420, image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80", ingredients: ["Quinoa", "Chickpeas", "Cucumber", "Tahini dressing"], steps: ["Cook quinoa", "Prep veggies", "Mix and dress"] },
-            { id: 10, title: "Caprese Sandwich", category: "Lunch", time: "10 min", calories: 360, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80", ingredients: ["Ciabatta", "Fresh mozzarella", "Tomato", "Basil", "Balsamic"], steps: ["Slice bread", "Layer ingredients", "Press and serve"] },
-            { id: 11, title: "Spaghetti Carbonara", category: "Dinner", time: "30 min", calories: 600, image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=800&q=80", ingredients: ["Spaghetti", "Pancetta", "Eggs", "Parmesan", "Black pepper"], steps: ["Boil pasta", "Fry pancetta", "Mix with egg sauce"] },
-            { id: 12, title: "Beef Stir Fry", category: "Dinner", time: "20 min", calories: 450, image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80", ingredients: ["Beef strips", "Bell peppers", "Soy sauce", "Ginger", "Garlic"], steps: ["Sear beef", "Stir fry veggies", "Combine with sauce"] },
-            { id: 13, title: "Salmon with Asparagus", category: "Dinner", time: "25 min", calories: 500, image: "https://images.unsplash.com/photo-1467003909585-2f8a7270028d?auto=format&fit=crop&w=800&q=80", ingredients: ["Salmon fillet", "Asparagus", "Lemon", "Garlic butter"], steps: ["Season salmon", "Roast together", "Squeeze lemon"] },
-            { id: 14, title: "Chicken Tikka Masala", category: "Dinner", time: "40 min", calories: 550, image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80", ingredients: ["Chicken", "Tikka paste", "Coconut milk", "Basmati rice"], steps: ["Marinate chicken", "Cook sauce", "Simmer and serve"] },
-            { id: 15, title: "Vegetable Lasagna", category: "Dinner", time: "50 min", calories: 480, image: "https://images.unsplash.com/photo-1574868233972-1e0e65c974c3?auto=format&fit=crop&w=800&q=80", ingredients: ["Lasagna sheets", "Zucchini", "Ricotta", "Tomato sauce", "Mozzarella"], steps: ["Layer ingredients", "Bake until golden", "Rest before serving"] },
-            { id: 16, title: "Chocolate Lava Cake", category: "Dessert", time: "25 min", calories: 500, image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=800&q=80", ingredients: ["Dark chocolate", "Butter", "Eggs", "Sugar", "Flour"], steps: ["Melt chocolate", "Mix batter", "Bake briefly"] },
-            { id: 17, title: "Classic Tiramisu", category: "Dessert", time: "30 min", calories: 450, image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=800&q=80", ingredients: ["Mascarpone", "Ladyfingers", "Espresso", "Cocoa powder"], steps: ["Soak biscuits", "Layer with cream", "Chill and dust"] },
-            { id: 18, title: "Fresh Fruit Tart", category: "Dessert", time: "45 min", calories: 380, image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80", ingredients: ["Pastry dough", "Custard", "Strawberries", "Kiwi", "Blueberries"], steps: ["Bake crust", "Fill with custard", "Arrange fruit"] },
-            { id: 19, title: "Vanilla Sundae", category: "Dessert", time: "10 min", calories: 400, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", ingredients: ["Vanilla ice cream", "Chocolate sauce", "Walnuts", "Cherry"], steps: ["Scoop ice cream", "Add toppings", "Serve immediately"] },
-            { id: 20, title: "Fudgy Brownies", category: "Dessert", time: "35 min", calories: 420, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476d?auto=format&fit=crop&w=800&q=80", ingredients: ["Dark chocolate", "Butter", "Sugar", "Flour", "Cocoa"], steps: ["Melt chocolate", "Mix batter", "Bake and cool"] },
-            // Generating remaining 80 recipes programmatically to ensure 100+ total
-            ...Array.from({length: 80}, (_, i) => {
-                const categories = ["Breakfast", "Lunch", "Dinner", "Dessert"];
-                const cat = categories[i % 4];
-                const dishes = ["Delight", "Special", "Surprise", "Feast", "Bowl", "Plate", "Mix", "Treat"];
-                const adj = ["Chef's", "Homestyle", "Gourmet", "Quick", "Healthy", "Spicy", "Sweet", "Savory"];
-                return {
-                    id: i + 21,
-                    title: `${adj[i % 8]} ${cat} ${dishes[i % 8]} ${i + 21}`,
-                    category: cat,
-                    time: `${20 + (i % 40)} min`,
-                    calories: 300 + (i * 5),
-                    image: `https://source.unsplash.com/random/800x600/?food,${cat.toLowerCase()}&sig=${i}`,
-                    ingredients: ["Fresh Ingredients", "Secret Spice Blend", "Love & Care", "Quality Produce"],
-                    steps: ["Prepare all ingredients", "Cook with attention", "Season to taste", "Serve hot and enjoy"]
-                };
-            })
+            { id: 1, title: "Classic Fluffy Pancakes", category: "Breakfast", time: "20 min", calories: 350, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80", desc: "Light, airy pancakes perfect for a weekend morning.", ingredients: ["2 cups all-purpose flour", "2 large eggs", "1 cup milk", "2 tbsp sugar", "1 tsp baking powder", "Butter for frying"], steps: ["Mix dry ingredients in a large bowl.", "Whisk eggs and milk together.", "Combine wet and dry mixtures gently.", "Cook on a greased griddle until bubbles form.", "Flip and serve with syrup."] },
+            { id: 2, title: "Avocado Toast Deluxe", category: "Breakfast", time: "10 min", calories: 250, image: "https://images.unsplash.com/photo-1588137372308-15f75323ca8d?auto=format&fit=crop&w=800&q=80", desc: "Creamy avocado on crispy sourdough with a twist.", ingredients: ["2 slices sourdough bread", "1 ripe avocado", "1 tsp lemon juice", "Salt and pepper", "Chili flakes", "Poached egg (optional)"], steps: ["Toast the bread until golden.", "Mash avocado with lemon and spices.", "Spread generously on toast.", "Top with a poached egg if desired."] },
+            { id: 3, title: "Berry Yogurt Parfait", category: "Breakfast", time: "5 min", calories: 300, image: "https://images.unsplash.com/photo-1563514227147-6d243bb8aa84?auto=format&fit=crop&w=800&q=80", desc: "Layers of Greek yogurt, honey, and fresh berries.", ingredients: ["1 cup Greek yogurt", "2 tbsp honey", "1/2 cup mixed berries", "1/4 cup granola", "Mint leaves"], steps: ["Add a layer of yogurt to a glass.", "Top with berries and drizzle honey.", "Add granola layer.", "Repeat layers and garnish with mint."] },
+            { id: 4, title: "Spinach and Feta Omelette", category: "Breakfast", time: "15 min", calories: 280, image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=800&q=80", desc: "Protein-packed omelette with fresh spinach.", ingredients: ["3 eggs", "1 cup fresh spinach", "2 tbsp feta cheese", "1 tsp olive oil", "Salt and pepper"], steps: ["Whisk eggs with salt and pepper.", "Sauté spinach in oil until wilted.", "Pour eggs into pan.", "Add feta and fold omelette when set."] },
+            { id: 5, title: "Tropical Smoothie Bowl", category: "Breakfast", time: "10 min", calories: 320, image: "https://images.unsplash.com/photo-1577805947697-b9e9c43c1ebd?auto=format&fit=crop&w=800&q=80", desc: "Refreshing blend of mango and banana.", ingredients: ["1 frozen banana", "1/2 cup frozen mango", "1/2 cup almond milk", "Chia seeds", "Coconut flakes"], steps: ["Blend fruits and milk until smooth.", "Pour into a bowl.", "Top with chia seeds and coconut.", "Serve immediately."] },
+            { id: 6, title: "Grilled Chicken Caesar", category: "Lunch", time: "25 min", calories: 400, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80", desc: "Classic Caesar salad with juicy grilled chicken.", ingredients: ["1 chicken breast", "Romaine lettuce", "Parmesan cheese", "Croutons", "Caesar dressing"], steps: ["Grill seasoned chicken until cooked.", "Chop lettuce and toss with dressing.", "Slice chicken and place on salad.", "Top with cheese and croutons."] },
+            { id: 7, title: "Caprese Panini", category: "Lunch", time: "15 min", calories: 380, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80", desc: "Melted mozzarella and fresh basil sandwich.", ingredients: ["Ciabatta roll", "Fresh mozzarella", "Tomato slices", "Fresh basil", "Balsamic glaze"], steps: ["Slice ciabatta and layer ingredients.", "Drizzle with balsamic.", "Grill in a panini press until melted.", "Serve warm."] },
+            { id: 8, title: "Quinoa Power Bowl", category: "Lunch", time: "20 min", calories: 420, image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80", desc: "Nutrient-dense bowl with chickpeas and veggies.", ingredients: ["1 cup cooked quinoa", "1/2 cup chickpeas", "Cucumber", "Cherry tomatoes", "Tahini dressing"], steps: ["Cook quinoa according to package.", "Chop vegetables.", "Assemble bowl with quinoa and veggies.", "Drizzle with tahini dressing."] },
+            { id: 9, title: "Turkey Club Wrap", category: "Lunch", time: "10 min", calories: 360, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80", desc: "Crispy bacon and turkey in a soft tortilla.", ingredients: ["Large tortilla", "Sliced turkey", "Bacon strips", "Lettuce", "Mayonnaise"], steps: ["Cook bacon until crisp.", "Spread mayo on tortilla.", "Layer turkey, bacon, and lettuce.", "Roll tightly and slice."] },
+            { id: 10, title: "Tomato Basil Soup", category: "Lunch", time: "30 min", calories: 220, image: "https://images.unsplash.com/photo-1547592166-23acbe346499?auto=format&fit=crop&w=800&q=80", desc: "Creamy homemade tomato soup with fresh basil.", ingredients: ["1 can tomatoes", "1 onion", "2 cloves garlic", "Fresh basil", "Vegetable broth"], steps: ["Sauté onion and garlic.", "Add tomatoes and broth.", "Simmer for 20 minutes.", "Blend until smooth and stir in basil."] },
+            { id: 11, title: "Spaghetti Carbonara", category: "Dinner", time: "30 min", calories: 600, image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=800&q=80", desc: "Rich Italian pasta with egg and pancetta.", ingredients: ["400g spaghetti", "200g pancetta", "4 eggs", "Parmesan cheese", "Black pepper"], steps: ["Boil pasta in salted water.", "Fry pancetta until crisp.", "Whisk eggs and cheese.", "Toss hot pasta with egg mixture and pancetta."] },
+            { id: 12, title: "Beef Stir Fry", category: "Dinner", time: "20 min", calories: 450, image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80", desc: "Quick and savory beef with colorful vegetables.", ingredients: ["300g beef strips", "Bell peppers", "Broccoli", "Soy sauce", "Ginger"], steps: ["Sear beef in a hot wok.", "Add chopped vegetables.", "Stir fry with soy sauce and ginger.", "Serve over rice."] },
+            { id: 13, title: "Salmon with Asparagus", category: "Dinner", time: "25 min", calories: 500, image: "https://images.unsplash.com/photo-1467003909585-2f8a7270028d?auto=format&fit=crop&w=800&q=80", desc: "Oven-roasted salmon fillet with tender asparagus.", ingredients: ["2 salmon fillets", "1 bunch asparagus", "Lemon", "Garlic", "Olive oil"], steps: ["Preheat oven to 200°C.", "Place salmon and asparagus on tray.", "Season with garlic and lemon.", "Roast for 15 minutes."] },
+            { id: 14, title: "Chicken Tikka Masala", category: "Dinner", time: "40 min", calories: 550, image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80", desc: "Creamy and spiced Indian curry classic.", ingredients: ["500g chicken", "Tikka masala paste", "Coconut milk", "Onion", "Rice"], steps: ["Brown chicken pieces.", "Sauté onions and paste.", "Add coconut milk and simmer.", "Serve with basmati rice."] },
+            { id: 15, title: "Veggie Lasagna", category: "Dinner", time: "50 min", calories: 480, image: "https://images.unsplash.com/photo-1574868233972-1e0e65c974c3?auto=format&fit=crop&w=800&q=80", desc: "Layers of pasta, cheese, and roasted vegetables.", ingredients: ["Lasagna sheets", "Zucchini", "Ricotta cheese", "Tomato sauce", "Spinach"], steps: ["Layer sheets, sauce, and veggies.", "Dot with ricotta.", "Bake at 180°C for 40 mins.", "Let rest before serving."] },
+            { id: 16, title: "Chocolate Lava Cake", category: "Dessert", time: "25 min", calories: 500, image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=800&q=80", desc: "Decadent cake with a molten chocolate center.", ingredients: ["100g dark chocolate", "100g butter", "2 eggs", "2 tbsp sugar", "2 tbsp flour"], steps: ["Melt chocolate and butter.", "Whisk eggs and sugar.", "Fold in chocolate and flour.", "Bake at 200°C for 12 mins."] },
+            { id: 17, title: "Classic Tiramisu", category: "Dessert", time: "30 min", calories: 450, image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=800&q=80", desc: "Italian coffee-flavored dessert.", ingredients: ["Mascarpone", "Ladyfingers", "Espresso", "Cocoa powder", "Eggs"], steps: ["Dip ladyfingers in coffee.", "Layer with mascarpone mix.", "Refrigerate for 4 hours.", "Dust with cocoa before serving."] },
+            { id: 18, title: "Strawberry Cheesecake", category: "Dessert", time: "45 min", calories: 420, image: "https://images.unsplash.com/photo-1565958011703-44f964fa2d13?auto=format&fit=crop&w=800&q=80", desc: "Creamy cheesecake topped with fresh strawberries.", ingredients: ["Cream cheese", "Graham crackers", "Sugar", "Strawberries", "Vanilla"], steps: ["Crush crackers for base.", "Mix cheese, sugar, vanilla.", "Pour over base and bake.", "Top with sliced strawberries."] },
+            { id: 19, title: "Mango Sorbet", category: "Dessert", time: "10 min", calories: 180, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Refreshing frozen treat made with real mango.", ingredients: ["2 cups frozen mango", "1/4 cup sugar", "1/2 cup water", "Lime juice"], steps: ["Blend all ingredients.", "Freeze for 2 hours.", "Scrape and serve.", "Garnish with mint."] },
+            { id: 20, title: "Double Chocolate Brownies", category: "Dessert", time: "35 min", calories: 420, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476d?auto=format&fit=crop&w=800&q=80", desc: "Fudgy brownies loaded with chocolate chips.", ingredients: ["200g chocolate", "150g butter", "200g sugar", "2 eggs", "100g flour"], steps: ["Melt chocolate and butter.", "Mix in sugar and eggs.", "Fold in flour.", "Bake at 170°C for 25 mins."] },
+            { id: 21, title: "Shakshuka", category: "Breakfast", time: "25 min", calories: 310, image: "https://images.unsplash.com/photo-1590412200988-a436970781fa?auto=format&fit=crop&w=800&q=80", desc: "Eggs poached in spiced tomato sauce.", ingredients: ["4 eggs", "1 can tomatoes", "1 onion", "Bell pepper", "Cumin"], steps: ["Sauté onions and peppers.", "Add tomatoes and spices.", "Crack eggs into sauce.", "Simmer until whites are set."] },
+            { id: 22, title: "French Toast", category: "Breakfast", time: "15 min", calories: 380, image: "https://images.unsplash.com/photo-1594498653385-d5175c532c38?auto=format&fit=crop&w=800&q=80", desc: "Golden battered bread with cinnamon.", ingredients: ["4 slices bread", "2 eggs", "1/2 cup milk", "Cinnamon", "Maple syrup"], steps: ["Whisk eggs, milk, cinnamon.", "Dip bread slices.", "Fry until golden brown.", "Serve with syrup."] },
+            { id: 23, title: "Acai Bowl", category: "Breakfast", time: "10 min", calories: 340, image: "https://images.unsplash.com/photo-1590412200988-a436970781fa?auto=format&fit=crop&w=800&q=80", desc: "Antioxidant-rich purple smoothie bowl.", ingredients: ["1 packet acai puree", "1 banana", "Granola", "Blueberries", "Honey"], steps: ["Blend acai and banana.", "Pour into bowl.", "Top with granola and fruit.", "Drizzle with honey."] },
+            { id: 24, title: "Bagel with Lox", category: "Breakfast", time: "10 min", calories: 390, image: "https://images.unsplash.com/photo-1518013431117-e3753a78cc58?auto=format&fit=crop&w=800&q=80", desc: "Toasted bagel with cream cheese and smoked salmon.", ingredients: ["1 bagel", "Cream cheese", "Smoked salmon", "Capers", "Red onion"], steps: ["Toast bagel halves.", "Spread cream cheese.", "Layer salmon and veggies.", "Serve immediately."] },
+            { id: 25, title: "Huevos Rancheros", category: "Breakfast", time: "20 min", calories: 410, image: "https://images.unsplash.com/photo-1594498653385-d5175c532c38?auto=format&fit=crop&w=800&q=80", desc: "Fried eggs on tortillas with salsa.", ingredients: ["2 eggs", "2 corn tortillas", "Salsa", "Black beans", "Avocado"], steps: ["Fry tortillas lightly.", "Fry eggs sunny side up.", "Warm beans and salsa.", "Assemble and top with avocado."] },
+            { id: 26, title: "Greek Salad", category: "Lunch", time: "10 min", calories: 280, image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=80", desc: "Fresh cucumber, tomato, and feta salad.", ingredients: ["Cucumber", "Tomatoes", "Feta cheese", "Olives", "Oregano"], steps: ["Chop vegetables.", "Combine in a bowl.", "Add feta and olives.", "Dress with oil and oregano."] },
+            { id: 27, title: "BLT Sandwich", category: "Lunch", time: "10 min", calories: 350, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80", desc: "Bacon, lettuce, and tomato classic.", ingredients: ["Bread", "Bacon", "Lettuce", "Tomato", "Mayo"], steps: ["Cook bacon.", "Toast bread.", "Layer ingredients with mayo.", "Close and slice."] },
+            { id: 28, title: "Poke Bowl", category: "Lunch", time: "20 min", calories: 450, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80", desc: "Hawaiian raw fish salad with rice.", ingredients: ["Sushi grade tuna", "Rice", "Edamame", "Seaweed", "Soy sauce"], steps: ["Cook sushi rice.", "Cube tuna.", "Arrange bowl with toppings.", "Drizzle with soy sauce."] },
+            { id: 29, title: "Minestrone Soup", category: "Lunch", time: "35 min", calories: 240, image: "https://images.unsplash.com/photo-1547592166-23acbe346499?auto=format&fit=crop&w=800&q=80", desc: "Hearty Italian vegetable soup.", ingredients: ["Beans", "Carrots", "Celery", "Tomatoes", "Pasta"], steps: ["Sauté base vegetables.", "Add broth and tomatoes.", "Simmer with beans.", "Add pasta near end."] },
+            { id: 30, title: "Falafel Wrap", category: "Lunch", time: "25 min", calories: 390, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80", desc: "Crispy chickpea balls in pita.", ingredients: ["Falafel balls", "Pita bread", "Tahini", "Pickles", "Lettuce"], steps: ["Heat falafel.", "Warm pita.", "Fill with veggies and sauce.", "Wrap tightly."] },
+            { id: 31, title: "Steak Frites", category: "Dinner", time: "30 min", calories: 650, image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=800&q=80", desc: "Pan-seared steak with crispy fries.", ingredients: ["Ribeye steak", "Potatoes", "Butter", "Thyme", "Garlic"], steps: ["Sear steak in hot pan.", "Add butter and herbs.", "Fry potatoes until golden.", "Rest steak before slicing."] },
+            { id: 32, title: "Pad Thai", category: "Dinner", time: "25 min", calories: 520, image: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=800&q=80", desc: "Sweet and sour Thai noodle dish.", ingredients: ["Rice noodles", "Shrimp", "Peanuts", "Bean sprouts", "Pad thai sauce"], steps: ["Soak noodles.", "Stir fry shrimp.", "Add noodles and sauce.", "Top with peanuts."] },
+            { id: 33, title: "Mushroom Risotto", category: "Dinner", time: "40 min", calories: 480, image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=800&q=80", desc: "Creamy Italian rice with mushrooms.", ingredients: ["Arborio rice", "Mushrooms", "White wine", "Parmesan", "Broth"], steps: ["Sauté mushrooms.", "Toast rice.", "Add wine and broth gradually.", "Stir in cheese."] },
+            { id: 34, title: "Fish Tacos", category: "Dinner", time: "20 min", calories: 400, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80", desc: "Baja style fish with slaw.", ingredients: ["White fish", "Corn tortillas", "Cabbage slaw", "Lime", "Cilantro"], steps: ["Season and grill fish.", "Warm tortillas.", "Assemble with slaw.", "Squeeze lime over top."] },
+            { id: 35, title: "Eggplant Parmesan", category: "Dinner", time: "45 min", calories: 460, image: "https://images.unsplash.com/photo-1574868233972-1e0e65c974c3?auto=format&fit=crop&w=800&q=80", desc: "Breaded eggplant with marinara.", ingredients: ["Eggplant", "Breadcrumbs", "Marinara", "Mozzarella", "Basil"], steps: ["Bread and fry eggplant.", "Layer with sauce and cheese.", "Bake until bubbly.", "Garnish with basil."] },
+            { id: 36, title: "Lemon Tart", category: "Dessert", time: "50 min", calories: 380, image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80", desc: "Tangy lemon custard in shortcrust.", ingredients: ["Shortcrust pastry", "Lemons", "Sugar", "Eggs", "Cream"], steps: ["Blind bake crust.", "Whisk lemon mixture.", "Pour into crust.", "Bake until set."] },
+            { id: 37, title: "Apple Pie", category: "Dessert", time: "60 min", calories: 410, image: "https://images.unsplash.com/photo-1562007908-17c67e878c60?auto=format&fit=crop&w=800&q=80", desc: "Classic American apple pie.", ingredients: ["Apples", "Pie crust", "Cinnamon", "Sugar", "Butter"], steps: ["Peel and slice apples.", "Mix with spices.", "Fill crust and cover.", "Bake until golden."] },
+            { id: 38, title: "Crème Brûlée", category: "Dessert", time: "45 min", calories: 350, image: "https://images.unsplash.com/photo-1470324153190-95491889187e?auto=format&fit=crop&w=800&q=80", desc: "Rich custard with caramelized sugar top.", ingredients: ["Heavy cream", "Egg yolks", "Vanilla", "Sugar"], steps: ["Heat cream and vanilla.", "Temper egg yolks.", "Bake in water bath.", "Torch sugar on top."] },
+            { id: 39, title: "Banana Bread", category: "Dessert", time: "55 min", calories: 320, image: "https://images.unsplash.com/photo-1607920533929-4c7b1f2f1d6a?auto=format&fit=crop&w=800&q=80", desc: "Moist bread made with ripe bananas.", ingredients: ["3 bananas", "Flour", "Sugar", "Butter", "Baking soda"], steps: ["Mash bananas.", "Mix wet and dry ingredients.", "Pour into loaf pan.", "Bake for 50 mins."] },
+            { id: 40, title: "Panna Cotta", category: "Dessert", time: "20 min", calories: 290, image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80", desc: "Silky Italian cooked cream dessert.", ingredients: ["Cream", "Sugar", "Gelatin", "Vanilla", "Berries"], steps: ["Bloom gelatin.", "Heat cream and sugar.", "Dissolve gelatin.", "Chill until set."] },
+            { id: 41, title: "Eggs Benedict", category: "Breakfast", time: "30 min", calories: 450, image: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?auto=format&fit=crop&w=800&q=80", desc: "Poached eggs on English muffin with hollandaise.", ingredients: ["English muffins", "Ham", "Eggs", "Butter", "Lemon"], steps: ["Make hollandaise sauce.", "Poach eggs.", "Toast muffins with ham.", "Assemble and pour sauce."] },
+            { id: 42, title: "Breakfast Burrito", category: "Breakfast", time: "15 min", calories: 480, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80", desc: "Scrambled eggs and cheese in a tortilla.", ingredients: ["Tortilla", "Eggs", "Cheese", "Salsa", "Sausage"], steps: ["Scramble eggs with sausage.", "Warm tortilla.", "Fill and roll.", "Serve with salsa."] },
+            { id: 43, title: "Waffles", category: "Breakfast", time: "20 min", calories: 360, image: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=800&q=80", desc: "Crispy Belgian waffles.", ingredients: ["Flour", "Milk", "Eggs", "Butter", "Sugar"], steps: ["Mix batter.", "Preheat waffle iron.", "Pour and cook.", "Serve with fruit."] },
+            { id: 44, title: "Granola Bowl", category: "Breakfast", time: "5 min", calories: 290, image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&w=800&q=80", desc: "Homemade granola with yogurt.", ingredients: ["Oats", "Nuts", "Honey", "Yogurt", "Fruit"], steps: ["Toast oats and nuts.", "Mix with honey.", "Serve over yogurt.", "Top with fruit."] },
+            { id: 45, title: "Breakfast Hash", category: "Breakfast", time: "25 min", calories: 370, image: "https://images.unsplash.com/photo-1594498653385-d5175c532c38?auto=format&fit=crop&w=800&q=80", desc: "Potatoes and peppers with eggs.", ingredients: ["Potatoes", "Peppers", "Onion", "Eggs", "Paprika"], steps: ["Dice and fry potatoes.", "Add veggies.", "Crack eggs on top.", "Cover and cook."] },
+            { id: 46, title: "Sushi Rolls", category: "Lunch", time: "40 min", calories: 350, image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80", desc: "Homemade California rolls.", ingredients: ["Sushi rice", "Nori", "Crab stick", "Avocado", "Cucumber"], steps: ["Cook and season rice.", "Lay nori and rice.", "Add fillings.", "Roll and slice."] },
+            { id: 47, title: "Gnocchi", category: "Lunch", time: "45 min", calories: 420, image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80", desc: "Potato dumplings in sage butter.", ingredients: ["Potatoes", "Flour", "Egg", "Butter", "Sage"], steps: ["Boil and mash potatoes.", "Form dough.", "Boil gnocchi.", "Toss in butter sauce."] },
+            { id: 48, title: "Ramen", category: "Lunch", time: "50 min", calories: 480, image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80", desc: "Japanese noodle soup with broth.", ingredients: ["Ramen noodles", "Broth", "Pork", "Egg", "Green onions"], steps: ["Prepare broth.", "Cook noodles.", "Slice pork and egg.", "Assemble bowl."] },
+            { id: 49, title: "Quesadilla", category: "Lunch", time: "15 min", calories: 380, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80", desc: "Cheesy grilled tortilla.", ingredients: ["Tortillas", "Cheese", "Chicken", "Peppers", "Sour cream"], steps: ["Fill tortilla.", "Grill until cheese melts.", "Cut into wedges.", "Serve with cream."] },
+            { id: 50, title: "Cobb Salad", category: "Lunch", time: "20 min", calories: 410, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80", desc: "American salad with everything.", ingredients: ["Lettuce", "Chicken", "Bacon", "Egg", "Blue cheese"], steps: ["Chop all ingredients.", "Arrange in rows.", "Drizzle with dressing.", "Toss before eating."] },
+            { id: 51, title: "Paella", category: "Dinner", time: "50 min", calories: 580, image: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=800&q=80", desc: "Spanish rice dish with seafood.", ingredients: ["Rice", "Shrimp", "Mussels", "Saffron", "Peas"], steps: ["Sauté seafood.", "Add rice and saffron.", "Pour in broth.", "Simmer until dry."] },
+            { id: 52, title: "Burger", category: "Dinner", time: "20 min", calories: 600, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80", desc: "Juicy beef burger with toppings.", ingredients: ["Ground beef", "Bun", "Lettuce", "Tomato", "Cheese"], steps: ["Form patties.", "Grill to preference.", "Toast buns.", "Assemble with toppings."] },
+            { id: 53, title: "Kung Pao Chicken", category: "Dinner", time: "25 min", calories: 460, image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=800&q=80", desc: "Spicy Sichuan stir fry.", ingredients: ["Chicken", "Peanuts", "Chilies", "Soy sauce", "Vinegar"], steps: ["Cube chicken.", "Stir fry with chilies.", "Add sauce and peanuts.", "Serve hot."] },
+            { id: 54, title: "Shepherd's Pie", category: "Dinner", time: "55 min", calories: 520, image: "https://images.unsplash.com/photo-1574868233972-1e0e65c974c3?auto=format&fit=crop&w=800&q=80", desc: "Meat filling topped with mashed potato.", ingredients: ["Ground lamb", "Potatoes", "Carrots", "Peas", "Gravy"], steps: ["Cook meat and veggies.", "Make mashed potatoes.", "Layer in dish.", "Bake until golden."] },
+            { id: 55, title: "Risotto", category: "Dinner", time: "40 min", calories: 470, image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=800&q=80", desc: "Creamy northern Italian rice.", ingredients: ["Arborio rice", "Wine", "Broth", "Onion", "Butter"], steps: ["Sauté onion.", "Toast rice.", "Add liquid slowly.", "Finish with butter."] },
+            { id: 56, title: "Macarons", category: "Dessert", time: "60 min", calories: 200, image: "https://images.unsplash.com/photo-1569838081593-10691d601c4c?auto=format&fit=crop&w=800&q=80", desc: "Delicate French almond meringue cookies.", ingredients: ["Almond flour", "Egg whites", "Sugar", "Food coloring", "Ganache"], steps: ["Make meringue.", "Fold in almond flour.", "Pipe circles.", "Bake and fill."] },
+            { id: 57, title: "Donuts", category: "Dessert", time: "40 min", calories: 350, image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80", desc: "Glazed fried dough rings.", ingredients: ["Flour", "Yeast", "Milk", "Sugar", "Oil"], steps: ["Make dough.", "Let rise.", "Cut and fry.", "Glaze while warm."] },
+            { id: 58, title: "Affogato", category: "Dessert", time: "5 min", calories: 180, image: "https://images.unsplash.com/photo-1572490122747-3958e2a30392?auto=format&fit=crop&w=800&q=80", desc: "Vanilla ice cream drowned in espresso.", ingredients: ["Vanilla ice cream", "Hot espresso", "Amaretti cookie"], steps: ["Scoop ice cream.", "Pour hot espresso over.", "Serve immediately.", "Add cookie on side."] },
+            { id: 59, title: "Fruit Salad", category: "Dessert", time: "15 min", calories: 150, image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80", desc: "Fresh seasonal fruit mix.", ingredients: ["Strawberries", "Kiwi", "Melon", "Grapes", "Mint"], steps: ["Wash and chop fruit.", "Combine in bowl.", "Garnish with mint.", "Chill before serving."] },
+            { id: 60, title: "Profiteroles", category: "Dessert", time: "50 min", calories: 320, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Choux pastry filled with cream.", ingredients: ["Choux pastry", "Cream", "Chocolate sauce", "Eggs", "Butter"], steps: ["Pipe and bake choux.", "Fill with cream.", "Drizzle with chocolate.", "Serve cool."] },
+            { id: 61, title: "Chilaquiles", category: "Breakfast", time: "20 min", calories: 420, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80", desc: "Tortilla chips in salsa verde.", ingredients: ["Tortilla chips", "Salsa verde", "Eggs", "Cheese", "Cream"], steps: ["Simmer chips in salsa.", "Top with fried eggs.", "Add cheese and cream.", "Serve hot."] },
+            { id: 62, title: "Biscuits and Gravy", category: "Breakfast", time: "25 min", calories: 490, image: "https://images.unsplash.com/photo-1594498653385-d5175c532c38?auto=format&fit=crop&w=800&q=80", desc: "Fluffy biscuits with sausage gravy.", ingredients: ["Flour", "Butter", "Sausage", "Milk", "Pepper"], steps: ["Bake biscuits.", "Cook sausage.", "Make roux and add milk.", "Pour over biscuits."] },
+            { id: 63, title: "Congee", category: "Breakfast", time: "60 min", calories: 280, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Chinese rice porridge.", ingredients: ["Rice", "Chicken broth", "Ginger", "Green onions", "Soy sauce"], steps: ["Simmer rice in broth.", "Stir frequently.", "Add ginger.", "Top with onions."] },
+            { id: 64, title: "Full English", category: "Breakfast", time: "30 min", calories: 650, image: "https://images.unsplash.com/photo-1594498653385-d5175c532c38?auto=format&fit=crop&w=800&q=80", desc: "Complete breakfast fry-up.", ingredients: ["Eggs", "Bacon", "Sausages", "Beans", "Toast"], steps: ["Fry meats.", "Cook eggs and beans.", "Toast bread.", "Plate everything together."] },
+            { id: 65, title: "Churros", category: "Breakfast", time: "30 min", calories: 380, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Fried dough pastry with sugar.", ingredients: ["Flour", "Water", "Sugar", "Cinnamon", "Oil"], steps: ["Make dough.", "Pipe into oil.", "Fry until golden.", "Roll in sugar."] },
+            { id: 66, title: "Banh Mi", category: "Lunch", time: "20 min", calories: 400, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80", desc: "Vietnamese sandwich with pickles.", ingredients: ["Baguette", "Pork", "Pickled carrots", "Cilantro", "Mayo"], steps: ["Grill pork.", "Slice baguette.", "Layer pickles and meat.", "Add herbs and sauce."] },
+            { id: 67, title: "Gyro", category: "Lunch", time: "25 min", calories: 450, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80", desc: "Greek meat wrap with tzatziki.", ingredients: ["Lamb/Beef", "Pita", "Tzatziki", "Tomato", "Onion"], steps: ["Cook meat slices.", "Warm pita.", "Fill with veggies.", "Top with sauce."] },
+            { id: 68, title: "Pho", category: "Lunch", time: "60 min", calories: 420, image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80", desc: "Vietnamese beef noodle soup.", ingredients: ["Beef bones", "Rice noodles", "Star anise", "Herbs", "Beef slices"], steps: ["Simmer bones for broth.", "Cook noodles.", "Slice beef thinly.", "Assemble with herbs."] },
+            { id: 69, title: "Club Sandwich", category: "Lunch", time: "15 min", calories: 480, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80", desc: "Triple decker sandwich.", ingredients: ["Bread", "Turkey", "Bacon", "Lettuce", "Tomato"], steps: ["Toast bread.", "Layer ingredients twice.", "Secure with picks.", "Cut into quarters."] },
+            { id: 70, title: "Bibimbap", category: "Lunch", time: "35 min", calories: 460, image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80", desc: "Korean mixed rice bowl.", ingredients: ["Rice", "Beef", "Vegetables", "Gochujang", "Egg"], steps: ["Cook rice.", "Prepare veggies separately.", "Fry beef.", "Mix with sauce and egg."] },
+            { id: 71, title: "Osso Buco", category: "Dinner", time: "120 min", calories: 620, image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=800&q=80", desc: "Braised veal shanks.", ingredients: ["Veal shanks", "White wine", "Tomatoes", "Carrots", "Gremolata"], steps: ["Brown veal.", "Add wine and veggies.", "Braise slowly.", "Top with gremolata."] },
+            { id: 72, title: "Coq au Vin", category: "Dinner", time: "90 min", calories: 550, image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80", desc: "Chicken braised in red wine.", ingredients: ["Chicken", "Red wine", "Mushrooms", "Bacon", "Pearl onions"], steps: ["Brown chicken and bacon.", "Add wine and herbs.", "Simmer with veggies.", "Reduce sauce."] },
+            { id: 73, title: "Jambalaya", category: "Dinner", time: "45 min", calories: 510, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80", desc: "Cajun rice dish with meat.", ingredients: ["Rice", "Sausage", "Chicken", "Peppers", "Cajun spice"], steps: ["Sauté meats.", "Add veggies and rice.", "Pour in stock.", "Cook until rice is done."] },
+            { id: 74, title: "Beef Wellington", category: "Dinner", time: "90 min", calories: 700, image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=800&q=80", desc: "Beef fillet in puff pastry.", ingredients: ["Beef tenderloin", "Puff pastry", "Mushrooms", "Prosciutto", "Mustard"], steps: ["Sear beef.", "Wrap in mushroom duxelles.", "Encase in pastry.", "Bake until golden."] },
+            { id: 75, title: "Ratatouille", category: "Dinner", time: "50 min", calories: 280, image: "https://images.unsplash.com/photo-1574868233972-1e0e65c974c3?auto=format&fit=crop&w=800&q=80", desc: "French stewed vegetables.", ingredients: ["Eggplant", "Zucchini", "Tomatoes", "Peppers", "Herbs"], steps: ["Slice vegetables.", "Layer in dish.", "Bake with herbs.", "Serve warm or cold."] },
+            { id: 76, title: "Baklava", category: "Dessert", time: "60 min", calories: 380, image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80", desc: "Sweet layered pastry with nuts.", ingredients: ["Phyllo dough", "Walnuts", "Butter", "Honey", "Cinnamon"], steps: ["Layer phyllo with butter.", "Add nut mixture.", "Bake until crisp.", "Soak in honey syrup."] },
+            { id: 77, title: "Mochi", category: "Dessert", time: "30 min", calories: 220, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Japanese rice cake.", ingredients: ["Glutinous rice flour", "Sugar", "Water", "Cornstarch", "Filling"], steps: ["Steam rice mixture.", "Pound until sticky.", "Shape into balls.", "Fill and seal."] },
+            { id: 78, title: "Key Lime Pie", category: "Dessert", time: "40 min", calories: 360, image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80", desc: "Tangy lime custard pie.", ingredients: ["Key limes", "Condensed milk", "Egg yolks", "Graham crust", "Cream"], steps: ["Mix lime and milk.", "Pour into crust.", "Bake briefly.", "Top with whipped cream."] },
+            { id: 79, title: "Cannoli", category: "Dessert", time: "45 min", calories: 340, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Sicilian tube pastry with ricotta.", ingredients: ["Ricotta", "Sugar", "Chocolate chips", "Pastry shells", "Pistachios"], steps: ["Mix filling.", "Fry shells.", "Fill just before serving.", "Dip in pistachios."] },
+            { id: 80, title: "Sorbet", category: "Dessert", time: "15 min", calories: 160, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Frozen fruit dessert.", ingredients: ["Fruit puree", "Sugar", "Water", "Lemon juice"], steps: ["Make simple syrup.", "Mix with puree.", "Freeze and churn.", "Serve scooped."] },
+            { id: 81, title: "Frittata", category: "Breakfast", time: "20 min", calories: 320, image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=800&q=80", desc: "Italian open-faced omelette.", ingredients: ["Eggs", "Potatoes", "Onion", "Cheese", "Herbs"], steps: ["Sauté veggies.", "Whisk eggs.", "Combine and cook.", "Finish under broiler."] },
+            { id: 82, title: "Porridge", category: "Breakfast", time: "15 min", calories: 240, image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&w=800&q=80", desc: "Warm oatmeal with toppings.", ingredients: ["Oats", "Milk", "Honey", "Cinnamon", "Berries"], steps: ["Simmer oats in milk.", "Stir constantly.", "Add sweeteners.", "Top with fruit."] },
+            { id: 83, title: "Breakfast Sandwich", category: "Breakfast", time: "10 min", calories: 380, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80", desc: "Egg and cheese on English muffin.", ingredients: ["English muffin", "Egg", "Cheese", "Ham", "Butter"], steps: ["Toast muffin.", "Fry egg and ham.", "Melt cheese.", "Assemble sandwich."] },
+            { id: 84, title: "Smoothie", category: "Breakfast", time: "5 min", calories: 280, image: "https://images.unsplash.com/photo-1577805947697-b9e9c43c1ebd?auto=format&fit=crop&w=800&q=80", desc: "Blended fruit drink.", ingredients: ["Banana", "Berries", "Yogurt", "Juice", "Ice"], steps: ["Add all to blender.", "Blend until smooth.", "Pour into glass.", "Serve chilled."] },
+            { id: 85, title: "Crepes", category: "Breakfast", time: "20 min", calories: 300, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80", desc: "Thin French pancakes.", ingredients: ["Flour", "Eggs", "Milk", "Butter", "Sugar"], steps: ["Make thin batter.", "Cook in hot pan.", "Flip quickly.", "Fill and fold."] },
+            { id: 86, title: "Spring Rolls", category: "Lunch", time: "25 min", calories: 220, image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80", desc: "Fresh Vietnamese rolls.", ingredients: ["Rice paper", "Shrimp", "Vermicelli", "Mint", "Peanut sauce"], steps: ["Soak rice paper.", "Add fillings.", "Roll tightly.", "Serve with sauce."] },
+            { id: 87, title: "Flatbread", category: "Lunch", time: "20 min", calories: 340, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80", desc: "Thin crust pizza alternative.", ingredients: ["Dough", "Tomato", "Mozzarella", "Basil", "Olive oil"], steps: ["Stretch dough.", "Top simply.", "Bake at high heat.", "Drizzle with oil."] },
+            { id: 88, title: "Chowder", category: "Lunch", time: "40 min", calories: 380, image: "https://images.unsplash.com/photo-1547592166-23acbe346499?auto=format&fit=crop&w=800&q=80", desc: "Creamy seafood soup.", ingredients: ["Clams", "Potatoes", "Cream", "Bacon", "Onion"], steps: ["Cook bacon.", "Add potatoes and clams.", "Simmer.", "Stir in cream."] },
+            { id: 89, title: "Nachos", category: "Lunch", time: "15 min", calories: 450, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80", desc: "Loaded tortilla chips.", ingredients: ["Chips", "Cheese", "Jalapenos", "Beans", "Salsa"], steps: ["Layer chips and cheese.", "Bake until melted.", "Add toppings.", "Serve with salsa."] },
+            { id: 90, title: "Gazpacho", category: "Lunch", time: "15 min", calories: 180, image: "https://images.unsplash.com/photo-1547592166-23acbe346499?auto=format&fit=crop&w=800&q=80", desc: "Cold Spanish tomato soup.", ingredients: ["Tomatoes", "Cucumber", "Pepper", "Garlic", "Vinegar"], steps: ["Chop all veggies.", "Blend until smooth.", "Chill thoroughly.", "Serve cold."] },
+            { id: 91, title: "Goulash", category: "Dinner", time: "90 min", calories: 540, image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80", desc: "Hungarian meat and vegetable stew.", ingredients: ["Beef", "Paprika", "Onions", "Potatoes", "Carrots"], steps: ["Brown beef.", "Add paprika and onions.", "Simmer with veggies.", "Cook until tender."] },
+            { id: 92, title: "Enchiladas", category: "Dinner", time: "40 min", calories: 490, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80", desc: "Rolled tortillas with sauce.", ingredients: ["Tortillas", "Chicken", "Enchilada sauce", "Cheese", "Sour cream"], steps: ["Fill tortillas.", "Roll and place in dish.", "Cover with sauce.", "Bake with cheese."] },
+            { id: 93, title: "Biryani", category: "Dinner", time: "60 min", calories: 560, image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80", desc: "Spiced Indian rice dish.", ingredients: ["Basmati rice", "Chicken", "Yogurt", "Saffron", "Spices"], steps: ["Marinate meat.", "Parboil rice.", "Layer and steam.", "Garnish with saffron."] },
+            { id: 94, title: "Schnitzel", category: "Dinner", time: "25 min", calories: 520, image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=800&q=80", desc: "Breaded fried meat cutlet.", ingredients: ["Pork/Veal", "Breadcrumbs", "Eggs", "Flour", "Lemon"], steps: ["Pound meat thin.", "Bread in three steps.", "Fry in oil.", "Serve with lemon."] },
+            { id: 95, title: "Fondue", category: "Dinner", time: "30 min", calories: 600, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Melted cheese pot for dipping.", ingredients: ["Gruyere", "White wine", "Garlic", "Bread cubes", "Kirsch"], steps: ["Rub pot with garlic.", "Melt cheese with wine.", "Keep warm.", "Dip bread."] },
+            { id: 96, title: "Soufflé", category: "Dessert", time: "40 min", calories: 280, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Light baked egg dish.", ingredients: ["Eggs", "Sugar", "Butter", "Flour", "Vanilla"], steps: ["Separate eggs.", "Whip whites.", "Fold gently.", "Bake immediately."] },
+            { id: 97, title: "Trifle", category: "Dessert", time: "30 min", calories: 350, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Layered fruit and custard dessert.", ingredients: ["Cake", "Custard", "Fruit", "Jelly", "Cream"], steps: ["Layer cake and jelly.", "Add fruit.", "Pour custard.", "Top with cream."] },
+            { id: 98, title: "Gelato", category: "Dessert", time: "30 min", calories: 240, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Italian dense ice cream.", ingredients: ["Milk", "Sugar", "Egg yolks", "Flavoring"], steps: ["Heat milk.", "Temper eggs.", "Churn slowly.", "Freeze."] },
+            { id: 99, title: "Bread Pudding", category: "Dessert", time: "50 min", calories: 360, image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80", desc: "Baked dessert from stale bread.", ingredients: ["Bread", "Milk", "Eggs", "Sugar", "Raisins"], steps: ["Soak bread in milk.", "Mix with eggs.", "Bake until set.", "Serve warm."] },
+            { id: 100, title: "Cheesecake", category: "Dessert", time: "60 min", calories: 450, image: "https://images.unsplash.com/photo-1565958011703-44f964fa2d13?auto=format&fit=crop&w=800&q=80", desc: "Rich creamy cheese cake.", ingredients: ["Cream cheese", "Sugar", "Eggs", "Crust", "Vanilla"], steps: ["Beat cheese and sugar.", "Add eggs.", "Bake in water bath.", "Chill overnight."] }
         ];
 
-        // --- STATE MANAGEMENT ---
+        // --- State ---
         let currentUser = null;
         let favorites = [];
         let mealPlan = {};
@@ -1185,13 +1681,13 @@
         let commandChar = null;
         let weightChar = null;
         let isConnected = false;
+        let currentStepIndex = 0;
 
-        // BLE UUIDs (Must match ESP32)
         const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
         const COMMAND_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
         const WEIGHT_UUID = 'a3c87500-8ed3-4bdf-9035-1f3da3229bb3';
 
-        // --- INITIALIZATION ---
+        // --- Init ---
         window.onload = () => {
             loadUser();
             renderRecipes(recipes.slice(0, 4), 'recommendedGrid');
@@ -1200,13 +1696,11 @@
             renderCalendar();
         };
 
-        // --- NAVIGATION ---
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(`${pageId}Page`).classList.remove('hidden');
             
-            // Update active link visually
             const links = document.querySelectorAll('.nav-link');
             links.forEach(link => {
                 if(link.getAttribute('onclick').includes(pageId)) {
@@ -1218,18 +1712,14 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- AUTHENTICATION ---
-        function openAuthModal() { 
-            document.getElementById('authModal').classList.add('active'); 
-        }
-        
+        // --- Auth ---
+        function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
         function switchAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById(`${tab}Form`).classList.add('active');
         }
-        
         function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -1239,21 +1729,14 @@
                 localStorage.setItem('fs_current', JSON.stringify(currentUser));
                 updateUI();
                 closeModal('authModal');
-                alert(`Welcome back, ${currentUser.name}!`);
-            } else { 
-                alert('User not found. Please sign up.'); 
-            }
+            } else { alert('User not found. Please sign up.'); }
         }
-        
         function handleSignup(e) {
             e.preventDefault();
             const name = document.getElementById('signupName').value;
             const email = document.getElementById('signupEmail').value;
             const users = JSON.parse(localStorage.getItem('fs_users') || '{}');
-            if(users[email]) { 
-                alert('Email already registered.'); 
-                return; 
-            }
+            if(users[email]) { alert('Email already registered.'); return; }
             const newUser = { name, email, favorites: [], plan: {} };
             users[email] = newUser;
             localStorage.setItem('fs_users', JSON.stringify(users));
@@ -1261,30 +1744,23 @@
             localStorage.setItem('fs_current', JSON.stringify(currentUser));
             updateUI();
             closeModal('authModal');
-            alert('Account created successfully!');
         }
-        
         function logout() {
             currentUser = null;
             localStorage.removeItem('fs_current');
             updateUI();
-            alert('Logged out successfully.');
         }
-        
         function loadUser() {
             const saved = localStorage.getItem('fs_current');
             if(saved) {
                 currentUser = JSON.parse(saved);
                 const users = JSON.parse(localStorage.getItem('fs_users') || '{}');
-                if(users[currentUser.email]) {
-                    currentUser = users[currentUser.email];
-                    favorites = currentUser.favorites || [];
-                    mealPlan = currentUser.plan || {};
-                    updateUI();
-                }
+                if(users[currentUser.email]) currentUser = users[currentUser.email];
+                favorites = currentUser.favorites || [];
+                mealPlan = currentUser.plan || {};
+                updateUI();
             }
         }
-        
         function updateUI() {
             const authBtn = document.getElementById('authBtn');
             const userInfo = document.getElementById('userInfo');
@@ -1298,164 +1774,154 @@
             }
         }
 
-        // --- RECIPES LOGIC ---
+        // --- Recipes ---
         function renderRecipes(list, containerId) {
             const container = document.getElementById(containerId);
-            if (!list || list.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-secondary); grid-column: 1/-1; text-align:center;">No recipes found.</p>';
-                return;
-            }
             container.innerHTML = list.map(r => `
                 <div class="recipe-card" onclick="openRecipeDetail(${r.id})">
                     <div class="recipe-image-wrapper">
                         <img src="${r.image}" class="recipe-image" alt="${r.title}" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'">
-                        <div class="recipe-badge">${r.category}</div>
                     </div>
                     <div class="recipe-content">
+                        <div class="recipe-category">${r.category}</div>
                         <div class="recipe-title">${r.title}</div>
+                        <div class="recipe-desc">${r.desc}</div>
                         <div class="recipe-meta">
-                            <span>⏱️ ${r.time}</span>
-                            <span>🔥 ${r.calories} kcal</span>
+                            <div class="meta-item">⏱️ ${r.time}</div>
+                            <div class="meta-item">🔥 ${r.calories} kcal</div>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
-        
         function renderFilters() {
             const cats = [...new Set(recipes.map(r => r.category))];
             const container = document.getElementById('filterContainer');
-            container.innerHTML = `<button class="btn btn-outline btn-sm" onclick="filterRecipes('all')">All</button>` + 
-                cats.map(c => `<button class="btn btn-outline btn-sm" onclick="filterRecipes('${c}')">${c}</button>`).join('');
+            container.innerHTML = `<button class="btn btn-outline" onclick="filterRecipes('all')">All</button>` + 
+                cats.map(c => `<button class="btn btn-outline" onclick="filterRecipes('${c}')">${c}</button>`).join('');
         }
-        
         function filterRecipes(cat) {
             const filtered = cat === 'all' ? recipes : recipes.filter(r => r.category === cat);
             renderRecipes(filtered, 'recipesGrid');
         }
-        
         function openRecipeDetail(id) {
             currentRecipe = recipes.find(r => r.id === id);
-            if(!currentRecipe) return;
-            
             document.getElementById('detailTitle').textContent = currentRecipe.title;
             document.getElementById('detailImage').src = currentRecipe.image;
             document.getElementById('detailMeta').innerHTML = `
-                <span style="margin-right:1rem">⏱️ ${currentRecipe.time}</span>
-                <span>🔥 ${currentRecipe.calories} kcal</span>
-                <span style="margin-left:1rem; color:var(--primary)">● ${currentRecipe.category}</span>
+                <div class="detail-meta-item">⏱️ ${currentRecipe.time}</div>
+                <div class="detail-meta-item">🔥 ${currentRecipe.calories} kcal</div>
+                <div class="detail-meta-item">🍽️ ${currentRecipe.category}</div>
             `;
             document.getElementById('detailIngredients').innerHTML = currentRecipe.ingredients.map(i => `<li class="ingredient-item">${i}</li>`).join('');
-            document.getElementById('detailSteps').innerHTML = currentRecipe.steps.map((s, i) => `<li class="step-item"><span class="step-number">${i+1}</span>${s}</li>`).join('');
-            
-            // Update favorite button state
-            const isFav = currentUser && currentUser.favorites.includes(currentRecipe.id);
-            const favBtn = document.getElementById('favBtn');
-            favBtn.innerHTML = isFav ? '❤️ Favorited' : '🤍 Favorite';
-            favBtn.style.color = isFav ? 'var(--error)' : 'var(--text-secondary)';
-            
+            document.getElementById('detailSteps').innerHTML = currentRecipe.steps.map((s, i) => `<li class="step-item"><span class="step-number">${i+1}</span><span class="step-text">${s}</span></li>`).join('');
             document.getElementById('recipeModal').classList.add('active');
         }
         
+        // Intuitive Guidance Mode
         function startGuidance() {
             if(!currentRecipe) return;
-            const steps = currentRecipe.steps.map((s, i) => `Step ${i+1}: ${s}`).join('\n\n');
-            alert("AI GUIDANCE MODE STARTED\n\n" + steps + "\n\nFollow these steps carefully. Your FlavorStation will guide you through flavor dispensing when needed.");
-        }
-        
-        function toggleFavoriteFromDetail() {
-            if(!currentUser) { 
-                openAuthModal(); 
-                return; 
-            }
-            if(!currentRecipe) return;
+            const overlay = document.getElementById('guidanceOverlay');
+            const container = document.getElementById('guidanceStepsContainer');
+            const title = document.getElementById('guidanceTitle');
             
-            const idx = favorites.indexOf(currentRecipe.id);
-            if(idx > -1) {
-                favorites.splice(idx, 1);
-                alert("Removed from favorites");
-            } else {
-                favorites.push(currentRecipe.id);
-                alert("Added to favorites");
+            title.textContent = `Cooking: ${currentRecipe.title}`;
+            container.innerHTML = currentRecipe.steps.map((step, index) => `
+                <div class="guidance-step ${index === 0 ? 'active' : ''}" data-step="${index}">
+                    <h3>Step ${index + 1}</h3>
+                    <p>${step}</p>
+                </div>
+            `).join('');
+            
+            currentStepIndex = 0;
+            updateGuidanceUI();
+            overlay.classList.add('active');
+            closeModal('recipeModal');
+        }
+
+        function updateGuidanceUI() {
+            const steps = document.querySelectorAll('.guidance-step');
+            const total = steps.length;
+            const progress = ((currentStepIndex + 1) / total) * 100;
+            
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            steps.forEach((step, idx) => {
+                step.classList.toggle('active', idx === currentStepIndex);
+            });
+
+            document.getElementById('prevStepBtn').disabled = currentStepIndex === 0;
+            document.getElementById('nextStepBtn').textContent = currentStepIndex === total - 1 ? 'Finish' : 'Next Step';
+        }
+
+        function changeStep(direction) {
+            const total = document.querySelectorAll('.guidance-step').length;
+            if (direction === 1 && currentStepIndex < total - 1) {
+                currentStepIndex++;
+            } else if (direction === -1 && currentStepIndex > 0) {
+                currentStepIndex--;
+            } else if (direction === 1 && currentStepIndex === total - 1) {
+                closeGuidance();
+                alert("Congratulations! Your dish is ready.");
+                return;
             }
+            updateGuidanceUI();
+        }
+
+        function closeGuidance() {
+            document.getElementById('guidanceOverlay').classList.remove('active');
+        }
+
+        function toggleFavoriteFromDetail() {
+            if(!currentUser) { openAuthModal(); return; }
+            const idx = favorites.indexOf(currentRecipe.id);
+            if(idx > -1) favorites.splice(idx, 1);
+            else favorites.push(currentRecipe.id);
             currentUser.favorites = favorites;
             saveUser();
-            
-            // Update button UI
-            const favBtn = document.getElementById('favBtn');
-            const isFav = favorites.includes(currentRecipe.id);
-            favBtn.innerHTML = isFav ? '❤️ Favorited' : '🤍 Favorite';
-            favBtn.style.color = isFav ? 'var(--error)' : 'var(--text-secondary)';
+            alert(idx > -1 ? "Removed from favorites" : "Added to favorites");
         }
-        
         function addToPlanFromDetail() {
-            if(!currentUser) { 
-                openAuthModal(); 
-                return; 
-            }
-            if(!currentRecipe) return;
-            
-            const day = prompt("Enter day to add this meal (Monday-Sunday):");
-            if(day) {
-                const validDay = day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
-                if(!mealPlan[validDay]) mealPlan[validDay] = [];
-                mealPlan[validDay].push({type: 'Dinner', recipeId: currentRecipe.id, title: currentRecipe.title});
+            if(!currentUser) { openAuthModal(); return; }
+            const day = prompt("Enter day (Monday-Sunday):");
+            if(day && mealPlan[day]) {
+                mealPlan[day].push({type: 'Dinner', recipeId: currentRecipe.id});
                 saveUser();
-                alert(`Added ${currentRecipe.title} to ${validDay}`);
-                closeModal('recipeModal');
+                alert("Added to " + day);
+            } else if (day) {
+                mealPlan[day] = [{type: 'Dinner', recipeId: currentRecipe.id}];
+                saveUser();
+                alert("Added to " + day);
             }
         }
 
-        // --- MEAL PLANNER LOGIC ---
+        // --- Meal Planner ---
         function renderCalendar() {
             const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
             const grid = document.getElementById('calendarGrid');
-            if(!grid) return;
-            
             grid.innerHTML = days.map(day => {
                 const meals = mealPlan[day] || [];
                 return `
                     <div class="day-card">
                         <div class="day-header">${day}</div>
-                        ${meals.length ? meals.map((m, idx) => `
-                            <div class="meal-slot" onclick="removeMeal('${day}', ${idx})">
-                                <strong>${m.type}:</strong> ${m.title || 'Recipe'}
-                            </div>
-                        `).join('') : '<div class="meal-slot empty" onclick="addMeal(\''+day+'\')">+ Add Meal</div>'}
+                        ${meals.length ? meals.map(m => `<div class="meal-slot">${m.type}</div>`).join('') : '<div class="meal-slot empty" onclick="addMeal(\''+day+'\')">+ Add Meal</div>'}
                     </div>
                 `;
             }).join('');
         }
-        
         function addMeal(day) {
-            if(!currentUser) { 
-                openAuthModal(); 
-                return; 
-            }
-            const recipeId = prompt(`Enter Recipe ID to add to ${day} (1-${recipes.length}):`);
+            if(!currentUser) { openAuthModal(); return; }
+            const recipeId = prompt("Enter Recipe ID (1-100):");
             if(recipeId) {
                 const r = recipes.find(x => x.id == recipeId);
                 if(r) {
                     if(!mealPlan[day]) mealPlan[day] = [];
-                    mealPlan[day].push({type: 'Meal', recipeId: r.id, title: r.title});
+                    mealPlan[day].push({type: 'Meal', recipeId: r.id});
                     saveUser();
                     renderCalendar();
-                    alert(`Added ${r.title} to ${day}`);
-                } else {
-                    alert("Invalid Recipe ID");
                 }
             }
         }
-        
-        function removeMeal(day, index) {
-            if(!confirm("Remove this meal from your plan?")) return;
-            if(mealPlan[day]) {
-                mealPlan[day].splice(index, 1);
-                saveUser();
-                renderCalendar();
-            }
-        }
-        
         function saveUser() {
             if(currentUser) {
                 currentUser.favorites = favorites;
@@ -1467,84 +1933,32 @@
             }
         }
 
-        // --- BLUETOOTH LOGIC ---
-        function openConnectModal() { 
-            document.getElementById('connectModal').classList.add('active'); 
-        }
-        
+        // --- Bluetooth ---
+        function openConnectModal() { document.getElementById('connectModal').classList.add('active'); }
         async function connectBluetooth() {
             try {
-                // Request device
-                const device = await navigator.bluetooth.requestDevice({ 
-                    filters: [{ services: [SERVICE_UUID] }] 
-                });
-                
+                const device = await navigator.bluetooth.requestDevice({ filters: [{ services: [SERVICE_UUID] }] });
                 bluetoothDevice = device;
-                
-                // Connect to GATT Server
                 const server = await device.gatt.connect();
-                
-                // Get Service
                 const service = await server.getPrimaryService(SERVICE_UUID);
-                
-                // Get Characteristics
                 commandChar = await service.getCharacteristic(COMMAND_UUID);
                 weightChar = await service.getCharacteristic(WEIGHT_UUID);
-                
-                // Setup Notifications for Weight
                 await weightChar.startNotifications();
-                weightChar.addEventListener('characteristicvaluechanged', handleWeightUpdate);
-                
+                weightChar.addEventListener('characteristicvaluechanged', handleWeight);
                 setIsConnected(true);
                 closeModal('connectModal');
-                alert("Successfully connected to FlavorStation-S3!");
-                
-            } catch(error) {
-                console.error("Bluetooth connection failed:", error);
-                alert("Connection failed: " + error.message);
-            }
+            } catch(e) { console.error(e); alert("Connection failed: " + e.message); }
         }
-        
-        function handleWeightUpdate(event) {
-            const value = event.target.value;
-            let weight = 0;
-            
-            // Decode Float32 (Little Endian)
-            if(value.byteLength >= 4) {
-                const view = new DataView(value.buffer);
-                weight = view.getFloat32(0, true); 
-            }
-            
-            const displayVal = weight.toFixed(2) + "g";
-            document.getElementById('statusText').textContent = `Connected - Weight: ${displayVal}`;
+        function handleWeight(e) {
+            const val = new DataView(e.target.value.buffer).getFloat32(0, true);
+            document.getElementById('statusText').textContent = `Connected - Weight: ${val.toFixed(2)}g`;
         }
-        
         function setIsConnected(connected) {
             isConnected = connected;
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
-            
-            if(connected) {
-                dot.className = 'status-dot connected';
-                text.textContent = 'Connected';
-            } else {
-                dot.className = 'status-dot';
-                text.textContent = 'Disconnected';
-            }
+            document.getElementById('statusDot').className = `status-dot ${connected ? 'connected' : ''}`;
+            document.getElementById('statusText').textContent = connected ? 'Connected' : 'Disconnected';
         }
-        
-        function closeModal(id) { 
-            document.getElementById(id).classList.remove('active'); 
-        }
-        
-        // Close modals on outside click
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', (e) => {
-                if(e.target === overlay) {
-                    overlay.classList.remove('active');
-                }
-            });
-        });
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     </script>
 </body>
 </html>
